@@ -10,37 +10,33 @@ const RoomDetail: React.FC = () => {
   const [choreModalOpen, setChoreModalOpen] = useState(false);
   const [room, setRoom] = useState<Room | null>(null);
   const [chores, setChores] = useState<Chore[]>([]);
+  const [selectedChore, setSelectedChore] = useState<Chore | null>(null); // Add selectedChore state
 
   useEffect(() => {
-    // Fetch room and chore data based on roomId
-    // Example fetch implementation, replace with your actual API call
-    // const fetchRoomAndChores = async () => {
-    //   try {
-    //     const roomResponse = await fetch(`/api/rooms/${roomId}`);
-    //     const roomData = await roomResponse.json();
-    //     setRoom(roomData);
-
-    //     const choresResponse = await fetch(`/api/rooms/${roomId}/chores`);
-    //     const choresData = await choresResponse.json();
-    //     setChores(choresData);
-    //   } catch (error) {
-    //     console.error('Error fetching room and chore data:', error);
-    //   }
-    // };
-
     const fetchRoomAndChores = () => {
-      const roomData = sampleRooms[Number(roomId)-1]
+      const roomData = sampleRooms[Number(roomId) - 1];
       setRoom(roomData);
 
-      const choresData = roomData.chores
+      const choresData = roomData.chores;
       setChores(choresData);
-    }
+    };
 
     fetchRoomAndChores();
   }, [roomId]);
 
-  const handleAddChore = (chore: Chore) => {
-    setChores([...chores, chore]);
+  const handleAddChore = (chore: Chore, choreId?: number) => {
+    // Update handleAddChore to accept optional choreId parameter
+    if (choreId != null) {
+      // If choreId is provided, update existing chore
+      setChores((prevChores) =>
+        prevChores.map((prevChore) =>
+          prevChore.id === choreId ? { ...chore, id: choreId } : prevChore
+        )
+      );
+    } else {
+      // If choreId is not provided, add new chore
+      setChores([...chores, chore]);
+    }
   };
 
   if (!room) {
@@ -60,21 +56,39 @@ const RoomDetail: React.FC = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {chores.map((chore) => (
-          <ChoreComponent chore={chore} key={chore.id} />
+          <ChoreComponent
+            chore={chore}
+            key={chore.id}
+            onEdit={() => {
+              setSelectedChore(chore); // Set selectedChore when editing a chore
+              setChoreModalOpen(true);
+            }}
+          />
         ))}
       </div>
       <div className="mt-4">
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
-          onClick={() => setChoreModalOpen(true)}
+          onClick={() => {
+            setSelectedChore(null); // Reset selectedChore before adding a new chore
+            setChoreModalOpen(true);
+          }}
         >
           Add Chore
         </button>
       </div>
       <ChoreModal
         isOpen={choreModalOpen}
-        onClose={() => setChoreModalOpen(false)}
-        onSave={handleAddChore}
+        onClose={() => {
+          setSelectedChore(null); // Reset selectedChore when closing the ChoreModal
+          setChoreModalOpen(false);
+        }}
+        onSave={(chore, choreId) => {
+          handleAddChore(chore, choreId); // Pass choreId to handleAddChore for editing scenario
+          setSelectedChore(null); // Reset selectedChore after saving a chore
+          setChoreModalOpen(false);
+        }}
+        chore={selectedChore} // Pass selectedChore to ChoreModal for editing scenario
       />
     </div>
   );

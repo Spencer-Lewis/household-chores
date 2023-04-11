@@ -1,11 +1,17 @@
 import React from 'react';
 import { Chore, FrequencyUnit } from '../types';
 
-interface ChoreProps {
+interface ChoreComponentProps {
   chore: Chore;
+  onEdit: (chore: Chore) => void;
 }
 
-const ChoreComponent: React.FC<ChoreProps> = ({ chore }) => {
+const ChoreComponent: React.FC<ChoreComponentProps> = ({ chore, onEdit }) => {
+
+  const handleEdit = () => {
+    onEdit(chore);
+  };
+
   return (
     <div
       key={chore.id}
@@ -26,6 +32,14 @@ const ChoreComponent: React.FC<ChoreProps> = ({ chore }) => {
       <p className="text-black">
         <span className="font-semibold">Completed:</span> {chore.completed ? 'Yes' : 'No'}
       </p>
+      <div className="mt-4">
+        <button
+          className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 focus:outline-none"
+          onClick={handleEdit}
+        >
+          Edit
+        </button>
+      </div>
     </div>
   );
 };

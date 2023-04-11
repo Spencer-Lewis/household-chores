@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Chore, FrequencyUnit } from '../types';
 
 interface ChoreModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (chore: Chore) => void;
-  chore?: Chore; // Optional chore prop for editing existing chore
+  onSave: (chore: Chore, choreId?: number) => void;
+  chore: Chore | null;
 }
 
 const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore }) => {
@@ -17,6 +17,23 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
   );
   const [choreCompleted, setChoreCompleted] = useState(chore?.completed || false);
 
+  useEffect(() => {
+    // Populate form fields with chore details when editing an existing chore
+    if (chore) {
+      setChoreName(chore.name);
+      setChoreRecurrence(chore.recurrence);
+      setChoreUnit(chore.unit);
+      setChoreDueDate(chore.dueDate);
+      setChoreCompleted(chore.completed);
+    } else {
+      setChoreName('');
+      setChoreRecurrence(1);
+      setChoreUnit(FrequencyUnit.Days);
+      setChoreDueDate(new Date());
+      setChoreCompleted(false);
+    }
+  }, [chore]);
+
   const handleSave = () => {
     const updatedChore: Chore = {
       id: chore?.id || Math.random(),
@@ -27,7 +44,7 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
       completed: choreCompleted,
     };
 
-    onSave(updatedChore);
+    onSave(updatedChore, chore?.id);
     onClose();
   };
 
