@@ -1,9 +1,9 @@
+import ChoreComponent from 'components/Chore';
 import { sampleRooms } from 'mocks/data/rooms';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ChoreModal from '../components/ChoreModal';
-import { Chore, FrequencyUnit, Room } from '../types';
-
+import { Chore, Room } from '../types';
 
 const RoomDetail: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>(); // Access roomId from route params
@@ -27,6 +27,7 @@ const RoomDetail: React.FC = () => {
     //     console.error('Error fetching room and chore data:', error);
     //   }
     // };
+
     const fetchRoomAndChores = () => {
       const roomData = sampleRooms[Number(roomId)-1]
       setRoom(roomData);
@@ -34,6 +35,7 @@ const RoomDetail: React.FC = () => {
       const choresData = roomData.chores
       setChores(choresData);
     }
+
     fetchRoomAndChores();
   }, [roomId]);
 
@@ -58,20 +60,7 @@ const RoomDetail: React.FC = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {chores.map((chore) => (
-          <div
-            key={chore.id}
-            className="bg-white p-4 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out"
-          >
-            <h3 className="text-xl font-semibold">{chore.name}</h3>
-            <p className="mt-2">
-              Recurs every {chore.recurrence}{' '}
-              {chore.unit === FrequencyUnit.Days
-                ? 'days'
-                : chore.unit === FrequencyUnit.Weeks
-                ? 'weeks'
-                : 'months'}
-            </p>
-          </div>
+          <ChoreComponent chore={chore} key={chore.id} />
         ))}
       </div>
       <div className="mt-4">
