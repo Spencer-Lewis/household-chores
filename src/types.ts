@@ -12,6 +12,7 @@ export interface Chore {
   unit: FrequencyUnit // recurrence unit of the chore
   dueDate: Date; // due date of the chore
   completed: boolean; // completion status of the chore
+  roomName?: string;
 }
 
 // Room interface to represent a room

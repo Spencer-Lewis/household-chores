@@ -25,6 +25,7 @@ const RoomDetail: React.FC = () => {
   }, [roomId]);
 
   const handleAddChore = (chore: Chore, choreId?: number) => {
+    chore.roomName = room?.name
     // Update handleAddChore to accept optional choreId parameter
     if (choreId != null) {
       // If choreId is provided, update existing chore

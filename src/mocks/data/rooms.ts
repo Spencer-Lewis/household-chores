@@ -13,6 +13,7 @@ export const sampleRooms: Room[] = [
         unit: FrequencyUnit.Days,
         dueDate: new Date(),
         completed: false,
+        roomName: 'Living Room'
       },
       {
         id: 2,
@@ -21,6 +22,7 @@ export const sampleRooms: Room[] = [
         unit: FrequencyUnit.Days,
         dueDate: new Date(),
         completed: false,
+        roomName: 'Living Room'
       },
     ],
   },
@@ -35,6 +37,7 @@ export const sampleRooms: Room[] = [
         unit: FrequencyUnit.Days,
         dueDate: new Date(),
         completed: false,
+        roomName: 'Kitchen'
       },
       {
         id: 4,
@@ -43,6 +46,7 @@ export const sampleRooms: Room[] = [
         unit: FrequencyUnit.Days,
         dueDate: new Date(),
         completed: false,
+        roomName: 'Kitchen'
       },
     ],
   },
