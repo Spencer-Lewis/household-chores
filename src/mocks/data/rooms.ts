@@ -1,5 +1,27 @@
 import { FrequencyUnit, Room } from "types";
 
+// Get today's date
+const currentDate = new Date();
+
+// Function to calculate due date based on recurrence and unit
+const calculateDueDate = (recurrence: number, unit: FrequencyUnit, offset: number) => {
+  const dueDate = new Date(currentDate);
+  switch (unit) {
+    case FrequencyUnit.Days:
+      dueDate.setDate(currentDate.getDate() - (recurrence + offset));
+      break;
+    case FrequencyUnit.Weeks:
+      dueDate.setDate(currentDate.getDate() - (recurrence * 7 + offset));
+      break;
+    case FrequencyUnit.Months:
+      dueDate.setMonth(currentDate.getMonth() - (recurrence + offset));
+      break;
+    default:
+      break;
+  }
+  return dueDate;
+};
+
 // Sample room data
 export const sampleRooms: Room[] = [
   {
@@ -11,7 +33,7 @@ export const sampleRooms: Room[] = [
         name: 'Vacuum',
         recurrence: 7,
         unit: FrequencyUnit.Days,
-        dueDate: new Date(),
+        dueDate: calculateDueDate(7, FrequencyUnit.Days, 0),
         completed: false,
         roomName: 'Living Room'
       },
@@ -20,7 +42,16 @@ export const sampleRooms: Room[] = [
         name: 'Dust',
         recurrence: 14,
         unit: FrequencyUnit.Days,
-        dueDate: new Date(),
+        dueDate: calculateDueDate(14, FrequencyUnit.Days, 5),
+        completed: false,
+        roomName: 'Living Room'
+      },
+      {
+        id: 3,
+        name: 'Clean Windows',
+        recurrence: 30,
+        unit: FrequencyUnit.Days,
+        dueDate: calculateDueDate(30, FrequencyUnit.Days, 13),
         completed: false,
         roomName: 'Living Room'
       },
@@ -31,23 +62,56 @@ export const sampleRooms: Room[] = [
     name: 'Kitchen',
     chores: [
       {
-        id: 3,
-        name: 'Wash Dishes',
+        id: 4,
+        name: 'Clean Fridge',
         recurrence: 1,
-        unit: FrequencyUnit.Days,
-        dueDate: new Date(),
+        unit: FrequencyUnit.Weeks,
+        dueDate: calculateDueDate(1, FrequencyUnit.Weeks, -10),
         completed: false,
         roomName: 'Kitchen'
       },
       {
-        id: 4,
+        id: 5,
         name: 'Clean Countertops',
         recurrence: 3,
         unit: FrequencyUnit.Days,
-        dueDate: new Date(),
+        dueDate: calculateDueDate(3, FrequencyUnit.Days, -5),
+        completed: false,
+        roomName: 'Kitchen'
+      },
+      {
+        id: 6,
+        name: 'Mop Floor',
+        recurrence: 7,
+        unit: FrequencyUnit.Days,
+        dueDate: calculateDueDate(7, FrequencyUnit.Days, 2),
         completed: false,
         roomName: 'Kitchen'
       },
     ],
   },
-];
+  {
+    id: 3,
+    name: 'Bathroom',
+    chores: [
+      {
+        id: 7,
+        name: 'Clean Toilet',
+        recurrence: 2,
+        unit: FrequencyUnit.Weeks,
+        dueDate: calculateDueDate(2, FrequencyUnit.Weeks, -16),
+        completed: false,
+        roomName: 'Bathroom'
+      },
+      {
+        id: 8,
+        name: 'Scrub Bathtub',
+        recurrence: 1,
+        unit: FrequencyUnit.Months,
+        dueDate: calculateDueDate(1, FrequencyUnit.Months, -3),
+        completed: false,
+        roomName: 'Bathroom'
+      }
+    ]
+  }
+]

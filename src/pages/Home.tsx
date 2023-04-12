@@ -10,6 +10,7 @@ const HomeDashboard = () => {
     const choresDue = room.chores.filter(isChoreDueToday);
     return [...acc, ...choresDue];
   }, []);
+
   // State to keep track of completed chores
   const [completedChores, setCompletedChores] = useState<number[]>([]);
 

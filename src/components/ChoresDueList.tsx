@@ -41,7 +41,7 @@ export const ChoresDueList: React.FC<Props> = ({ choresDueToday, onCheckmarkClic
           </li>
         ))
       ) : (
-        <li className="text-gray-500">No chores due today</li>
+        <li className="text-gray-500 flex justify-center">No chores due today</li>
       )}
     </ul>
   );

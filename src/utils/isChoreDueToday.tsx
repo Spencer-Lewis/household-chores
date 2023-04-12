@@ -4,22 +4,10 @@ const isChoreDueToday = (chore: Chore): boolean => {
   const today = new Date();
   const dueDate = new Date(chore.dueDate);
 
-  // Extract the year, month, and day from the dueDate
-  const dueYear = dueDate.getFullYear();
-  const dueMonth = dueDate.getMonth();
-  const dueDay = dueDate.getDate();
-
-  // Extract the year, month, and day from today's date
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
-  const currentDay = today.getDate();
-
-  // Compare the year, month, and day to check if the chore is due today
+  // Compare the dueDate to today's date, and check if it's on or before today
   return (
     !chore.completed &&
-    dueYear === currentYear &&
-    dueMonth === currentMonth &&
-    dueDay === currentDay
+    dueDate <= today // Check if the dueDate is on or before today
   );
 };
 
