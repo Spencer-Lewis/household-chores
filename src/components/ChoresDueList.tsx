@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Chore } from '../types';
 
 interface Props {
@@ -7,16 +7,23 @@ interface Props {
 }
 
 export const ChoresDueList: React.FC<Props> = ({ choresDueToday, onCheckmarkClick }) => {
+  const [selectedChoreId, setSelectedChoreId] = useState<number | null>(null);
+
+  const handleChoreItemClick = (choreId: number) => {
+    setSelectedChoreId(choreId);
+  };
+
   return (
     <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {choresDueToday.length > 0 ? (
         choresDueToday.map(chore => (
           <li
             key={chore.id}
-            className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md relative"
+            className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md relative cursor-pointer"
+            onClick={() => handleChoreItemClick(chore.id)}
           >
             {chore.name} ({chore.roomName})
-            <span className="absolute top-0 right-0 -mt-1 -mr-1">
+            <span className={`absolute top-0 right-0 -mt-1 -mr-1 ${selectedChoreId === chore.id ? '' : 'hidden'}`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 text-green-500"
@@ -38,4 +45,3 @@ export const ChoresDueList: React.FC<Props> = ({ choresDueToday, onCheckmarkClic
     </ul>
   );
 };
-
