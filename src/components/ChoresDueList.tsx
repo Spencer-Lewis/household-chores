@@ -19,7 +19,7 @@ export const ChoresDueList: React.FC<Props> = ({ choresDueToday, onCheckmarkClic
         choresDueToday.map(chore => (
           <li
             key={chore.id}
-            className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md relative cursor-pointer"
+            className="bg-gray-700 hover:bg-gray-600 text-white py-4 px-4 rounded-md relative cursor-pointer"
             onClick={() => handleChoreItemClick(chore.id)}
           >
             {chore.name} ({chore.roomName})
