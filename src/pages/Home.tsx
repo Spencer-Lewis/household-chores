@@ -1,5 +1,5 @@
 import { ChoresDueList } from "components/ChoresDueList";
-import { RoomList } from "components/RoomList";
+import RoomList from "components/RoomList";
 import { useState } from "react";
 import { Chore, Room } from "types";
 import isChoreDueToday from "utils/isChoreDueToday";
