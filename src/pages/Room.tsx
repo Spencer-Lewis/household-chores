@@ -86,6 +86,7 @@ const RoomDetail: React.FC = () => {
                 setChoreModalOpen(false);
               }}
               chore={selectedChore} // Pass selectedChore to ChoreModal for editing scenario
+              room={room}
             />
           </div>
         </div>

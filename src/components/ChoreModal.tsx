@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { Chore, FrequencyUnit } from '../types';
+import { Chore, FrequencyUnit, Room } from '../types';
 
 interface ChoreModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (chore: Chore, choreId?: number) => void;
   chore: Chore | null;
+  room: Room
 }
 
-const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore }) => {
+const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore, room }) => {
   const [choreName, setChoreName] = useState(chore?.name || '');
   const [choreRecurrence, setChoreRecurrence] = useState(chore?.recurrence || 1);
   const [choreUnit, setChoreUnit] = useState(chore?.unit || FrequencyUnit.Days);
   const [choreDueDate, setChoreDueDate] = useState(
     chore?.dueDate ? new Date(chore?.dueDate) : new Date()
   );
-  const [choreCompleted, setChoreCompleted] = useState(chore?.completed || false);
 
   useEffect(() => {
     // Populate form fields with chore details when editing an existing chore
@@ -25,13 +25,11 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
       setChoreRecurrence(chore.recurrence);
       setChoreUnit(chore.unit);
       setChoreDueDate(chore.dueDate);
-      setChoreCompleted(chore.completed);
     } else {
       setChoreName('');
       setChoreRecurrence(1);
       setChoreUnit(FrequencyUnit.Days);
       setChoreDueDate(new Date());
-      setChoreCompleted(false);
     }
   }, [chore]);
 
@@ -42,7 +40,7 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
       recurrence: choreRecurrence,
       unit: choreUnit,
       dueDate: new Date(choreDueDate),
-      completed: choreCompleted,
+      completed: false,
     };
 
     onSave(updatedChore, chore?.id);
@@ -56,7 +54,7 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
         }`}
       >
         <div className="bg-gray-700 w-96 mx-auto mt-12 p-4 rounded-md shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-white">{chore ? 'Edit Chore' : 'Add Chore'}</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-white">{chore ? 'Edit Chore' : 'Add Chore'} - {room.name}</h2>
           <form>
             <div className="mb-4">
               <label htmlFor="choreName" className="block text-white font-medium mb-1">
@@ -101,13 +99,6 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
               <label htmlFor="choreDueDate" className="block text-white font-medium mb-1">
                 Due Date
               </label>
-              {/* <input
-                type="date"
-                id="choreDueDate"
-                className="text-white w-full bg-gray-800 border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-                value={choreDueDate.toISOString().substr(0, 10)} // Convert Date object to string in YYYY-MM-DD format
-                onChange={(e) => setChoreDueDate(new Date(e.target.value))}
-              /> */}
               <DatePicker
                 id="choreDueDate"
                 className="w-full px-4 py-2 mt-2 text-white bg-gray-800 rounded-md" // Update className for input field
@@ -121,18 +112,6 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
                   color: '#fff', // White text color
                   border: 'none', // Remove border
                 }}
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="choreCompleted" className="block text-white font-medium mb-1">
-                Completed
-              </label>
-              <input
-                type="checkbox"
-                id="choreCompleted"
-                className="mr-2"
-                checked={choreCompleted}
-                onChange={(e) => setChoreCompleted(e.target.checked)}
               />
             </div>
             <div className="flex justify-end">
