@@ -46,10 +46,10 @@ const RoomDetail: React.FC = () => {
 
   return (
 
-    <div className="bg-gray-800 text-white min-h-screen">
-      <div className="bg-gray-900 py-8">
+    <div className="bg-gray-900 text-white min-h-screen">
+      <div className="py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8 flex justify-center">{room.name}</h1>
+          <h1 className="text-4xl font-bold mb-2 flex justify-center">{room.name}</h1>
           <div>
           <div className="mt-4 flex justify-center">
           <button
