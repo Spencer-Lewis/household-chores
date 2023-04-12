@@ -18,7 +18,7 @@ const RoomList: React.FC<RoomListProps> = ({ rooms }) => {
               <Link
                 key={room.id}
                 to={`/rooms/${room.id}`} // Link to RoomDetail component with room ID as URL param
-                className="border border-gray-700 p-4 rounded-md"
+                className="bg-gray-700 p-4 rounded-md"
               >
                 <h3 className="text-xl font-semibold mb-4">{room.name}</h3>
                 <ul className="list-disc list-inside">
