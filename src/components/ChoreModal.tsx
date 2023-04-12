@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import { Chore, FrequencyUnit } from '../types';
 
 interface ChoreModalProps {
@@ -49,99 +50,110 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
   };
 
   return (
-    <div
-      className={`fixed top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-50 z-10 ${
-        isOpen ? 'block' : 'hidden'
-      }`}
-    >
-      <div className="bg-white w-96 mx-auto mt-12 p-4 rounded-md shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">{chore ? 'Edit Chore' : 'Add Chore'}</h2>
-        <form>
-          <div className="mb-4">
-            <label htmlFor="choreName" className="block text-gray-700 font-medium mb-1">
-              Chore Name
-            </label>
-            <input
-              type="text"
-              id="choreName"
-              className="text-black w-full border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-              value={choreName}
-              onChange={(e) => setChoreName(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="choreRecurrence" className="block text-gray-700 font-medium mb-1">
-              Recurrence
-            </label>
-            <input
-              type="number"
-              id="choreRecurrence"
-              className="text-black w-full border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-              value={choreRecurrence}
-              onChange={(e) => setChoreRecurrence(Number(e.target.value))}
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="choreUnit" className="block text-gray-700 font-medium mb-1">
-              Unit
-            </label>
-            <select
-              id="choreUnit"
-              className="text-black w-full border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-              value={choreUnit}
-              onChange={(e) => setChoreUnit(e.target.value as FrequencyUnit)}
-            >
-              <option value={FrequencyUnit.Days}>Days</option>
-              <option
-              value={FrequencyUnit.Weeks}
-              >Weeks</option>
-              <option value={FrequencyUnit.Months}>Months</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="choreDueDate" className="block text-gray-700 font-medium mb-1">
-              Due Date
-            </label>
-            <input
-              type="date"
-              id="choreDueDate"
-              className="text-black w-full border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-              value={choreDueDate.toISOString().substr(0, 10)} // Convert Date object to string in YYYY-MM-DD format
-              onChange={(e) => setChoreDueDate(new Date(e.target.value))}
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="choreCompleted" className="block text-gray-700 font-medium mb-1">
-              Completed
-            </label>
-            <input
-              type="checkbox"
-              id="choreCompleted"
-              className="mr-2"
-              checked={choreCompleted}
-              onChange={(e) => setChoreCompleted(e.target.checked)}
-            />
-            <span>Mark as completed</span>
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none"
-              onClick={handleSave}
-            >
-              {chore ? 'Save' : 'Add'}
-            </button>
-            <button
-              type="button"
-              className="bg-gray-300 text-gray-700 ml-2 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+      <div
+        className={`fixed top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-50 z-10 ${
+          isOpen ? 'block' : 'hidden'
+        }`}
+      >
+        <div className="bg-gray-700 w-96 mx-auto mt-12 p-4 rounded-md shadow-md">
+          <h2 className="text-2xl font-semibold mb-4 text-white">{chore ? 'Edit Chore' : 'Add Chore'}</h2>
+          <form>
+            <div className="mb-4">
+              <label htmlFor="choreName" className="block text-white font-medium mb-1">
+                Chore Name
+              </label>
+              <input
+                type="text"
+                id="choreName"
+                className="text-white w-full bg-gray-800 border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
+                value={choreName}
+                onChange={(e) => setChoreName(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="choreRecurrence" className="block text-white font-medium mb-1">
+                Recurrence
+              </label>
+              <input
+                type="number"
+                id="choreRecurrence"
+                className="text-white w-full bg-gray-800 border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
+                value={choreRecurrence}
+                onChange={(e) => setChoreRecurrence(Number(e.target.value))}
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="choreUnit" className="block text-white font-medium mb-1">
+                Unit
+              </label>
+              <select
+                id="choreUnit"
+                className="text-white w-full bg-gray-800 border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
+                value={choreUnit}
+                onChange={(e) => setChoreUnit(e.target.value as FrequencyUnit)}
+              >
+                <option value={FrequencyUnit.Days}>Days</option>
+                <option value={FrequencyUnit.Weeks}>Weeks</option>
+                <option value={FrequencyUnit.Months}>Months</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="choreDueDate" className="block text-white font-medium mb-1">
+                Due Date
+              </label>
+              {/* <input
+                type="date"
+                id="choreDueDate"
+                className="text-white w-full bg-gray-800 border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
+                value={choreDueDate.toISOString().substr(0, 10)} // Convert Date object to string in YYYY-MM-DD format
+                onChange={(e) => setChoreDueDate(new Date(e.target.value))}
+              /> */}
+              <DatePicker
+                id="choreDueDate"
+                className="w-full px-4 py-2 mt-2 text-white bg-gray-800 rounded-md" // Update className for input field
+                selected={choreDueDate}
+                onChange={(date: Date) => setChoreDueDate(date)}
+                dateFormat="MMMM d, yyyy"
+                placeholderText="Select a date"
+                popperClassName="bg-gray-800 text-white" // Update popperClassName for calendar
+                calendarStyle={{ // Set custom calendar styles
+                  backgroundColor: 'rgb(55, 65, 81)', // Dark background color
+                  color: '#fff', // White text color
+                  border: 'none', // Remove border
+                }}
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="choreCompleted" className="block text-white font-medium mb-1">
+                Completed
+              </label>
+              <input
+                type="checkbox"
+                id="choreCompleted"
+                className="mr-2"
+                checked={choreCompleted}
+                onChange={(e) => setChoreCompleted(e.target.checked)}
+              />
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mr-2"
+                onClick={handleSave}
+              >
+                {chore ? 'Save' : 'Add'}
+              </button>
+              <button
+                type="button"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
   );
 };
 

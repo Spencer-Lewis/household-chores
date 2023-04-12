@@ -28,12 +28,13 @@ const HomeDashboard = () => {
     <div className="bg-gray-800 text-white min-h-screen">
       <div className="fixed top-0 left-0 right-0 bg-gray-900 py-8 z-50">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8">Chores Due Today</h1>
+          <h1 className="text-4xl font-bold mb-8 flex justify-center">Chores Due Today</h1> {/* Update className to include 'flex justify-center' */}
           <ChoresDueList choresDueToday={choresDueToday} onCheckmarkClick={handleCheckmarkClick} />
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default HomeDashboard;
