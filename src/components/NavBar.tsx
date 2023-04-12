@@ -1,3 +1,5 @@
+import { faCheckCircle, faHome } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useLocation } from "react-router-dom";
 
 const NavBar = () => {
@@ -8,13 +10,15 @@ const NavBar = () => {
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-gray-700 p-4 flex justify-around">
       <Link to="/" className={`text-white ${currentPath === '/' ? 'text-green-500' : ''}`}>
-        To Do
+        <FontAwesomeIcon icon={faCheckCircle} className="mr-2 text-lg" />
+        <span className="font-bold text-lg">To Do</span>
       </Link>
       <Link
         to="/rooms"
         className={`text-white ${currentPath.includes('/rooms') ? 'text-green-500' : ''}`}
       >
-        Rooms
+        <FontAwesomeIcon icon={faHome} className="mr-2 text-lg" />
+        <span className="font-bold text-lg">Rooms</span>
       </Link>
     </nav>
   );
