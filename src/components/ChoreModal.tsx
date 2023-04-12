@@ -40,7 +40,6 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore,
       recurrence: choreRecurrence,
       unit: choreUnit,
       dueDate: new Date(choreDueDate),
-      completed: false,
     };
 
     onSave(updatedChore, chore?.id);

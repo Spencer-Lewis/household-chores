@@ -1,7 +1,7 @@
 import { ChoresDueList } from "components/ChoresDueList";
 import { sampleRooms } from 'mocks/data/rooms';
 import { useState } from "react";
-import { Chore, Room } from "types";
+import { Chore, FrequencyUnit, Room } from "types";
 import isChoreDueToday from "utils/isChoreDueToday";
 
 const HomeDashboard = () => {
@@ -16,7 +16,23 @@ const HomeDashboard = () => {
 
   // Function to mark a chore as completed
   const markChoreAsCompleted = (chore: Chore) => {
-    chore.completed = true;
+    const currentDate = new Date();
+    const dueDate = new Date(currentDate);
+    
+    switch (chore.unit) {
+      case FrequencyUnit.Days:
+        dueDate.setDate(currentDate.getDate() + chore.recurrence);
+        break;
+      case FrequencyUnit.Weeks:
+        dueDate.setDate(currentDate.getDate() + (chore.recurrence * 7));
+        break;
+      case FrequencyUnit.Months:
+        dueDate.setDate(currentDate.getDate() + (chore.recurrence * 30));
+        break;
+      default:
+        break;
+    }
+    chore.dueDate = dueDate
   };
 
   // Function to handle clicking on checkmark button

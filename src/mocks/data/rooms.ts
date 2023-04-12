@@ -34,7 +34,6 @@ export const sampleRooms: Room[] = [
         recurrence: 7,
         unit: FrequencyUnit.Days,
         dueDate: calculateDueDate(7, FrequencyUnit.Days, 0),
-        completed: false,
         roomName: 'Living Room'
       },
       {
@@ -43,7 +42,6 @@ export const sampleRooms: Room[] = [
         recurrence: 14,
         unit: FrequencyUnit.Days,
         dueDate: calculateDueDate(14, FrequencyUnit.Days, 5),
-        completed: false,
         roomName: 'Living Room'
       },
       {
@@ -52,7 +50,6 @@ export const sampleRooms: Room[] = [
         recurrence: 30,
         unit: FrequencyUnit.Days,
         dueDate: calculateDueDate(30, FrequencyUnit.Days, 13),
-        completed: false,
         roomName: 'Living Room'
       },
     ],
@@ -67,7 +64,6 @@ export const sampleRooms: Room[] = [
         recurrence: 1,
         unit: FrequencyUnit.Weeks,
         dueDate: calculateDueDate(1, FrequencyUnit.Weeks, -10),
-        completed: false,
         roomName: 'Kitchen'
       },
       {
@@ -76,7 +72,6 @@ export const sampleRooms: Room[] = [
         recurrence: 3,
         unit: FrequencyUnit.Days,
         dueDate: calculateDueDate(3, FrequencyUnit.Days, -5),
-        completed: false,
         roomName: 'Kitchen'
       },
       {
@@ -85,7 +80,6 @@ export const sampleRooms: Room[] = [
         recurrence: 7,
         unit: FrequencyUnit.Days,
         dueDate: calculateDueDate(7, FrequencyUnit.Days, 2),
-        completed: false,
         roomName: 'Kitchen'
       },
     ],
@@ -100,7 +94,6 @@ export const sampleRooms: Room[] = [
         recurrence: 2,
         unit: FrequencyUnit.Weeks,
         dueDate: calculateDueDate(2, FrequencyUnit.Weeks, -16),
-        completed: false,
         roomName: 'Bathroom'
       },
       {
@@ -109,7 +102,6 @@ export const sampleRooms: Room[] = [
         recurrence: 1,
         unit: FrequencyUnit.Months,
         dueDate: calculateDueDate(1, FrequencyUnit.Months, -3),
-        completed: false,
         roomName: 'Bathroom'
       }
     ]
