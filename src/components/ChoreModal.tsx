@@ -1,3 +1,5 @@
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Chore, FrequencyUnit, Room } from '../types';
@@ -6,11 +8,19 @@ interface ChoreModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (chore: Chore, choreId?: number) => void;
+  onDelete: (choreId: number) => void; // Add onDelete prop
   chore: Chore | null;
-  room: Room
+  room: Room;
 }
 
-const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore, room }) => {
+const ChoreModal: React.FC<ChoreModalProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  onDelete, // Add onDelete prop
+  chore,
+  room,
+}) => {
   const [choreName, setChoreName] = useState(chore?.name || '');
   const [choreRecurrence, setChoreRecurrence] = useState(chore?.recurrence || 1);
   const [choreUnit, setChoreUnit] = useState(chore?.unit || FrequencyUnit.Days);
@@ -44,6 +54,13 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore,
 
     onSave(updatedChore, chore?.id);
     onClose();
+  };
+
+  const handleDelete = () => {
+    if (chore) {
+      onDelete(chore.id);
+      onClose();
+    }
   };
 
   return (
@@ -113,10 +130,20 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore,
                 }}
               />
             </div>
-            <div className="flex justify-end">
+            <div className="flex">
+              {chore?.id ? <button
+                type="button"
+                className="hover:text-red-700 text-red-500 px-4 py-2 rounded-md mr-2"
+                onClick={handleDelete}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="mr-2" />
+              </button> : null}
+              <div className="flex-grow">
+
+              </div>
               <button
                 type="button"
-                className="bg-green-500   hover:bg-green-700 text-white px-4 py-2 rounded-md mr-2"
+                className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md mr-2"
                 onClick={handleSave}
               >
                 {chore ? 'Save' : 'Add'}

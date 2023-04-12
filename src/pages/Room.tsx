@@ -40,6 +40,10 @@ const RoomDetail: React.FC = () => {
     }
   };
 
+  const handleDeleteChore = (choreId: number) => {
+    setChores(chores.filter(chore => chore.id !== choreId))
+  }
+
   if (!room) {
     return <div>Loading...</div>;
   }
@@ -52,16 +56,16 @@ const RoomDetail: React.FC = () => {
           <h1 className="text-4xl font-bold mb-2 flex justify-center">{room.name}</h1>
           <div>
           <div className="mt-4 flex justify-center">
-          <button
-            className="bg-transparent hover:bg-green-500 text-green-500 hover:text-white py-2 px-4 rounded-md mb-4 border-none focus:outline-none font-semibold text-lg font-serif"
-            onClick={() => {
-              setSelectedChore(null); // Reset selectedChore before adding a new chore
-              setChoreModalOpen(true);
-            }}
-          >
-            <span className="animate-pulse inline-block">+</span> Add Chore
-          </button>
-            </div>
+            <button
+              className="bg-transparent hover:bg-green-500 text-green-500 hover:text-white py-2 px-4 rounded-md mb-4 border-none focus:outline-none font-semibold text-lg font-serif"
+              onClick={() => {
+                setSelectedChore(null); // Reset selectedChore before adding a new chore
+                setChoreModalOpen(true);
+              }}
+            >
+              <span className="animate-pulse inline-block">+</span> Add Chore
+            </button>
+          </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {chores.map((chore) => (
                 <ChoreComponent
@@ -87,6 +91,7 @@ const RoomDetail: React.FC = () => {
               }}
               chore={selectedChore} // Pass selectedChore to ChoreModal for editing scenario
               room={room}
+              onDelete={handleDeleteChore}
             />
           </div>
         </div>
