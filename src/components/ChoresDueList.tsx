@@ -26,7 +26,7 @@ export const ChoresDueList: React.FC<Props> = ({ choresDueToday, onCheckmarkClic
             <span className={`absolute top-0 right-0 -mt-1 -mr-1 ${selectedChoreId === chore.id ? '' : 'hidden'}`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-green-500"
+                className="h-5 w-5"
                 viewBox="0 0 20 20"
                 onClick={() => onCheckmarkClick(chore)}
               >
@@ -34,6 +34,7 @@ export const ChoresDueList: React.FC<Props> = ({ choresDueToday, onCheckmarkClic
                   fillRule="evenodd"
                   d="M17.707 5.293a1 1 0 010 1.414l-10 10a1 1 0 01-1.414 0l-5-5a1 1 0 011.414-1.414L7 12.586l9.293-9.293a1 1 0 011.414 0z"
                   clipRule="evenodd"
+                  fill="currentColor" // Update fill property to use 'currentColor'
                 />
               </svg>
             </span>

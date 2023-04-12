@@ -138,7 +138,7 @@ const ChoreModal: React.FC<ChoreModalProps> = ({ isOpen, onClose, onSave, chore 
             <div className="flex justify-end">
               <button
                 type="button"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mr-2"
+                className="bg-green-500   hover:bg-green-700 text-white px-4 py-2 rounded-md mr-2"
                 onClick={handleSave}
               >
                 {chore ? 'Save' : 'Add'}
