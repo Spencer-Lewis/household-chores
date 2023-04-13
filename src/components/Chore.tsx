@@ -23,7 +23,7 @@ const ChoreComponent: React.FC<ChoreComponentProps> = ({ chore, onEdit }) => {
       className="bg-gray-700 hover:bg-gray-600 p-4 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out relative"
     >
       <button
-        className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 focus:outline-none text-sm absolute top-0 right-0 mt-2 mr-2"
+        className="text-white px-2 py-1 rounded-md hover:bg-green-700 focus:outline-none text-sm absolute top-0 right-0 mt-2 mr-2"
         onClick={handleEdit}
       >
         <FontAwesomeIcon icon={faPencilAlt} />
