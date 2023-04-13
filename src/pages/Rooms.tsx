@@ -4,6 +4,7 @@ import RoomList from 'components/RoomList'
 import { useState, useEffect } from 'react'
 import RoomModal from '../components/RoomModal'
 import { Room } from '../types'
+import NavBar from 'components/NavBar'
 
 // RoomsPage component
 const RoomsPage = () => {
@@ -89,7 +90,7 @@ const RoomsPage = () => {
 							<span className='inline-block animate-pulse'>+</span> Add Room
 						</button>
 					</div>
-					<div className='max-h-screen overflow-y-auto'>
+					<div className='max-h-[40rem] overflow-y-auto'>
 						<RoomList
 							rooms={rooms}
 							onDeleteRoom={handleDeleteRoom}
@@ -103,6 +104,7 @@ const RoomsPage = () => {
 					/>
 				</div>
 			</div>
+			<NavBar />
 		</div>
 	)
 }

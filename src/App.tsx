@@ -1,5 +1,4 @@
 import LoadingOrError from 'components/LoadingOrError'
-import NavBar from 'components/NavBar'
 import type { ReactElement } from 'react'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -20,7 +19,6 @@ export default function App(): ReactElement {
 						<Route path='/rooms/:roomId' element={<Details />} />
 					</Routes>
 				</Suspense>
-				<NavBar />
 			</div>
 		</BrowserRouter>
 	)

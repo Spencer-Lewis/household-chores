@@ -1,4 +1,5 @@
 import { ChoresDueList } from 'components/ChoresDueList'
+import NavBar from 'components/NavBar'
 import { useState, useEffect } from 'react'
 import { Chore, FrequencyUnit, Room } from 'types'
 import isChoreDueToday from 'utils/isChoreDueToday'
@@ -82,13 +83,19 @@ const HomeDashboard = () => {
 	}, [completedChores])
 
 	return (
-		<div className='min-h-screen bg-gray-900 text-white'>
-			<div className='fixed top-0 left-0 right-0 z-50 py-8'>
+		<div>
+			<div
+				className='fixed top-0 left-0 right-0 z-50 py-8'
+				style={{ paddingBottom: '60px' }} // Adjust the value to match the height of your NavBar
+			>
 				<div className='container mx-auto px-4'>
 					<h1 className='mb-8 flex justify-center text-4xl font-bold'>
 						{choresDueToday.length} Tasks Due
 					</h1>
-					<div className='max-h-screen overflow-y-auto'>
+					<div
+						className='max-h-[42rem] overflow-y-auto'
+						style={{ marginBottom: '60px' }} // Adjust the value to match the height of your NavBar
+					>
 						<ChoresDueList
 							choresDueToday={choresDueToday}
 							onCheckmarkClick={handleCheckmarkClick}
@@ -96,6 +103,7 @@ const HomeDashboard = () => {
 					</div>
 				</div>
 			</div>
+			<NavBar />
 		</div>
 	)
 }

@@ -2,6 +2,7 @@ import ChoreComponent from 'components/Chore'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import ChoreModal from '../components/ChoreModal'
+import NavBar from 'components/NavBar'
 import { Chore, Room } from '../types'
 
 const RoomDetail: React.FC = () => {
@@ -115,7 +116,7 @@ const RoomDetail: React.FC = () => {
 								<span className='inline-block animate-pulse'>+</span> Add Chore
 							</button>
 						</div>
-						<div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+						<div className='grid max-h-[39rem] grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
 							{chores.map(chore => (
 								<ChoreComponent
 									chore={chore}
@@ -145,6 +146,7 @@ const RoomDetail: React.FC = () => {
 					</div>
 				</div>
 			</div>
+			<NavBar />
 		</div>
 	)
 }
