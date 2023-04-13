@@ -116,7 +116,7 @@ const RoomDetail: React.FC = () => {
 								<span className='inline-block animate-pulse'>+</span> Add Chore
 							</button>
 						</div>
-						<div className='grid max-h-[39rem] grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
+						<div className='grid max-h-[32rem] grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
 							{chores.map(chore => (
 								<ChoreComponent
 									chore={chore}

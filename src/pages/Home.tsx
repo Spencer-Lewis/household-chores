@@ -93,7 +93,7 @@ const HomeDashboard = () => {
 						{choresDueToday.length} Tasks Due
 					</h1>
 					<div
-						className='max-h-[42rem] overflow-y-auto'
+						className='max-h-[35.5rem] overflow-y-auto'
 						style={{ marginBottom: '60px' }} // Adjust the value to match the height of your NavBar
 					>
 						<ChoresDueList

@@ -90,7 +90,7 @@ const RoomsPage = () => {
 							<span className='inline-block animate-pulse'>+</span> Add Room
 						</button>
 					</div>
-					<div className='max-h-[40rem] overflow-y-auto'>
+					<div className='max-h-[33.5rem] overflow-y-auto'>
 						<RoomList
 							rooms={rooms}
 							onDeleteRoom={handleDeleteRoom}
