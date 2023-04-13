@@ -1,57 +1,101 @@
-import { ChoresDueList } from "components/ChoresDueList";
-import { sampleRooms } from 'mocks/data/rooms';
-import { useState } from "react";
-import { Chore, FrequencyUnit, Room } from "types";
-import isChoreDueToday from "utils/isChoreDueToday";
+import { ChoresDueList } from 'components/ChoresDueList'
+import { useState, useEffect } from 'react'
+import { Chore, FrequencyUnit, Room } from 'types'
+import isChoreDueToday from 'utils/isChoreDueToday'
 
 const HomeDashboard = () => {
-  // Get chores that are due today from all rooms
-  const choresDueToday = sampleRooms.reduce((acc: Chore[], room: Room) => {
-    const choresDue = room.chores.filter(isChoreDueToday);
-    return [...acc, ...choresDue];
-  }, []);
+	const [rooms, setRooms] = useState<Room[]>([])
+	// Get chores that are due today from all rooms
+	const choresDueToday = rooms.reduce((acc: Chore[], room: Room) => {
+		const choresDue = room.chores.filter(isChoreDueToday)
+		return [...acc, ...choresDue]
+	}, [])
+	// State to keep track of completed chores
+	const [completedChores, setCompletedChores] = useState<number>(0)
 
-  // State to keep track of completed chores
-  const [completedChores, setCompletedChores] = useState<number[]>([]);
+	// Function to mark a chore as completed
+	const markChoreAsCompleted = async (chore: Chore) => {
+		const currentDate = new Date()
+		const dueDate = new Date(currentDate)
+		switch (chore.unit) {
+			case FrequencyUnit.Days:
+				dueDate.setDate(currentDate.getDate() + chore.recurrence)
+				break
+			case FrequencyUnit.Weeks:
+				dueDate.setDate(currentDate.getDate() + chore.recurrence * 7)
+				break
+			case FrequencyUnit.Months:
+				dueDate.setDate(currentDate.getDate() + chore.recurrence * 30)
+				break
+			default:
+				break
+		}
+		chore.dueDate = dueDate
 
-  // Function to mark a chore as completed
-  const markChoreAsCompleted = (chore: Chore) => {
-    const currentDate = new Date();
-    const dueDate = new Date(currentDate);
-    
-    switch (chore.unit) {
-      case FrequencyUnit.Days:
-        dueDate.setDate(currentDate.getDate() + chore.recurrence);
-        break;
-      case FrequencyUnit.Weeks:
-        dueDate.setDate(currentDate.getDate() + (chore.recurrence * 7));
-        break;
-      case FrequencyUnit.Months:
-        dueDate.setDate(currentDate.getDate() + (chore.recurrence * 30));
-        break;
-      default:
-        break;
-    }
-    chore.dueDate = dueDate
-  };
+		const updateRoom = rooms.filter(room => room.name == chore.roomName)
+		if (updateRoom.length > 0) {
+			let roomToUpdate = updateRoom[0]
+			await fetch(
+				`https://chores-service.onrender.com/chores/room/${roomToUpdate._id}/chore/${chore._id}`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(chore)
+				}
+			)
+			setCompletedChores(completedChores + 1)
+		}
+	}
 
-  // Function to handle clicking on checkmark button
-  const handleCheckmarkClick = (chore: Chore) => {
-    markChoreAsCompleted(chore);
-    setCompletedChores([...completedChores, chore.id]);
-  };
+	// Function to handle clicking on checkmark button
+	const handleCheckmarkClick = (chore: Chore) => {
+		markChoreAsCompleted(chore)
+	}
 
-  return (
-    <div className="bg-gray-900 text-white min-h-screen">
-      <div className="fixed top-0 left-0 right-0 py-8 z-50">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8 flex justify-center">{choresDueToday.length} Tasks Due</h1>
-          <ChoresDueList choresDueToday={choresDueToday} onCheckmarkClick={handleCheckmarkClick} />
-        </div>
-      </div>
-    </div>
-  );
-  
-};
+	useEffect(() => {
+		const fetchRooms = async () => {
+			try {
+				// Fetch room data from API
+				const roomResponse = await fetch(
+					'https://chores-service.onrender.com/rooms'
+				)
+				const roomsJson = await roomResponse.json()
+				const parsedRooms: Room[] = roomsJson.map(room => {
+					let parsedRoom: Room = {
+						_id: room._id,
+						name: room.name,
+						chores: room.chores.map(chore => {
+							chore.dueDate = new Date(chore.dueDate)
+							return chore
+						})
+					}
+					return parsedRoom
+				})
+				setRooms(parsedRooms)
+			} catch (error) {
+				console.error('Failed to fetch room and chores data', error)
+			}
+		}
+		fetchRooms()
+	}, [completedChores])
 
-export default HomeDashboard;
+	return (
+		<div className='min-h-screen bg-gray-900 text-white'>
+			<div className='fixed top-0 left-0 right-0 z-50 py-8'>
+				<div className='container mx-auto px-4'>
+					<h1 className='mb-8 flex justify-center text-4xl font-bold'>
+						{choresDueToday.length} Tasks Due
+					</h1>
+					<ChoresDueList
+						choresDueToday={choresDueToday}
+						onCheckmarkClick={handleCheckmarkClick}
+					/>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+export default HomeDashboard
