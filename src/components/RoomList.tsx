@@ -1,3 +1,5 @@
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Room } from '../types';
@@ -18,12 +20,17 @@ const RoomList: React.FC<RoomListProps> = ({ rooms, onDeleteRoom, deleteMode }) 
       {rooms.map(room => (
         <div key={room.id} className="bg-gray-700 p-4 rounded-md relative">
           {deleteMode && (
-            <button
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full h-6 w-6 flex justify-center items-center"
-              onClick={() => handleDeleteRoom(room.id)}
-            >
-              X
-            </button>
+            <span className={"absolute top-2 right-2"}>
+              <button
+                type="button"
+                onClick={() => handleDeleteRoom(room.id)}
+              >
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  className="text-red-500 text-4xl mt-3 mr-2  "
+                />
+              </button>
+            </span>
           )}
           <Link to={`/rooms/${room.id}`}>
             <div>
