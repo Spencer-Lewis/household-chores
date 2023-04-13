@@ -17,7 +17,7 @@ export default function App(): ReactElement {
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/rooms/:roomId" element={<Details />} />
         </Routes>
-        <NavBar /> {/* Render the NavBar component at the bottom of the page */}
+        <NavBar />
       </Suspense>
     </BrowserRouter>
   );
