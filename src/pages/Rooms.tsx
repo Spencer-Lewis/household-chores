@@ -89,11 +89,13 @@ const RoomsPage = () => {
 							<span className='inline-block animate-pulse'>+</span> Add Room
 						</button>
 					</div>
-					<RoomList
-						rooms={rooms}
-						onDeleteRoom={handleDeleteRoom}
-						deleteMode={deleteMode}
-					/>
+					<div className='max-h-screen overflow-y-auto'>
+						<RoomList
+							rooms={rooms}
+							onDeleteRoom={handleDeleteRoom}
+							deleteMode={deleteMode}
+						/>
+					</div>
 					<RoomModal
 						isOpen={roomModalOpen}
 						onClose={() => setRoomModalOpen(false)}

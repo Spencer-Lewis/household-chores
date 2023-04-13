@@ -88,10 +88,12 @@ const HomeDashboard = () => {
 					<h1 className='mb-8 flex justify-center text-4xl font-bold'>
 						{choresDueToday.length} Tasks Due
 					</h1>
-					<ChoresDueList
-						choresDueToday={choresDueToday}
-						onCheckmarkClick={handleCheckmarkClick}
-					/>
+					<div className='max-h-screen overflow-y-auto'>
+						<ChoresDueList
+							choresDueToday={choresDueToday}
+							onCheckmarkClick={handleCheckmarkClick}
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
