@@ -3,6 +3,7 @@ import NavBar from 'components/NavBar'
 import { useState, useEffect } from 'react'
 import { Chore, FrequencyUnit, Room } from 'types'
 import isChoreDueToday from 'utils/isChoreDueToday'
+import { fetchRooms, updateChoreCompleted } from 'api/choresServiceApiClient'
 
 const HomeDashboard = () => {
 	const [rooms, setRooms] = useState<Room[]>([])
@@ -16,36 +17,10 @@ const HomeDashboard = () => {
 
 	// Function to mark a chore as completed
 	const markChoreAsCompleted = async (chore: Chore) => {
-		const currentDate = new Date()
-		const dueDate = new Date(currentDate)
-		switch (chore.unit) {
-			case FrequencyUnit.Days:
-				dueDate.setDate(currentDate.getDate() + chore.recurrence)
-				break
-			case FrequencyUnit.Weeks:
-				dueDate.setDate(currentDate.getDate() + chore.recurrence * 7)
-				break
-			case FrequencyUnit.Months:
-				dueDate.setDate(currentDate.getDate() + chore.recurrence * 30)
-				break
-			default:
-				break
-		}
-		chore.dueDate = dueDate
-
 		const updateRoom = rooms.filter(room => room.name == chore.roomName)
 		if (updateRoom.length > 0) {
-			let roomToUpdate = updateRoom[0]
-			await fetch(
-				`https://chores-service.onrender.com/chores/room/${roomToUpdate._id}/chore/${chore._id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(chore)
-				}
-			)
+			const roomToUpdate = updateRoom[0]
+			await updateChoreCompleted(chore, roomToUpdate)
 			setCompletedChores(completedChores + 1)
 		}
 	}
@@ -56,30 +31,11 @@ const HomeDashboard = () => {
 	}
 
 	useEffect(() => {
-		const fetchRooms = async () => {
-			try {
-				// Fetch room data from API
-				const roomResponse = await fetch(
-					'https://chores-service.onrender.com/rooms'
-				)
-				const roomsJson = await roomResponse.json()
-				const parsedRooms: Room[] = roomsJson.map(room => {
-					let parsedRoom: Room = {
-						_id: room._id,
-						name: room.name,
-						chores: room.chores.map(chore => {
-							chore.dueDate = new Date(chore.dueDate)
-							return chore
-						})
-					}
-					return parsedRoom
-				})
-				setRooms(parsedRooms)
-			} catch (error) {
-				console.error('Failed to fetch room and chores data', error)
-			}
+		const getRooms = async () => {
+			const parsedRooms: Room[] = await fetchRooms()
+			setRooms(parsedRooms)
 		}
-		fetchRooms()
+		getRooms()
 	}, [completedChores])
 
 	return (

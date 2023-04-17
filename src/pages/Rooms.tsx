@@ -5,12 +5,11 @@ import { useState, useEffect } from 'react'
 import RoomModal from '../components/RoomModal'
 import { Room } from '../types'
 import NavBar from 'components/NavBar'
+import { fetchRooms, createRoom, deleteRoom } from 'api/choresServiceApiClient'
 
-// RoomsPage component
 const RoomsPage = () => {
 	const [roomModalOpen, setRoomModalOpen] = useState(false)
-	const [deleteMode, setDeleteMode] = useState(false) // Add state for delete mode
-	const [roomsDeleted, setRoomsDeleted] = useState(0)
+	const [deleteMode, setDeleteMode] = useState(false)
 	const [rooms, setRooms] = useState<Room[]>([])
 
 	const handleAddRoom = () => {
@@ -19,13 +18,7 @@ const RoomsPage = () => {
 
 	const onCreateRoom = async (roomData: Room) => {
 		setRoomModalOpen(false)
-		await fetch('https://chores-service.onrender.com/rooms', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(roomData)
-		})
+		await createRoom(roomData)
 		const updatedRooms = [...rooms]
 		updatedRooms.push(roomData)
 		setRooms(updatedRooms)
@@ -33,9 +26,7 @@ const RoomsPage = () => {
 
 	const handleDeleteRoom = async (roomId: number) => {
 		try {
-			await fetch(`https://chores-service.onrender.com/rooms/${roomId}`, {
-				method: 'DELETE'
-			})
+			await deleteRoom(roomId)
 			const updatedRooms = rooms.filter(room => room._id !== roomId)
 			setRooms(updatedRooms)
 		} catch (error) {
@@ -44,30 +35,11 @@ const RoomsPage = () => {
 	}
 
 	useEffect(() => {
-		const fetchRooms = async () => {
-			try {
-				// Fetch room data from API
-				const roomResponse = await fetch(
-					'https://chores-service.onrender.com/rooms'
-				)
-				const roomsJson = await roomResponse.json()
-				const parsedRooms: Room[] = roomsJson.map(room => {
-					let parsedRoom: Room = {
-						_id: room._id,
-						name: room.name,
-						chores: room.chores.map(chore => {
-							chore.dueDate = new Date(chore.dueDate)
-							return chore
-						})
-					}
-					return parsedRoom
-				})
-				setRooms(parsedRooms)
-			} catch (error) {
-				console.error('Failed to fetch room and chores data', error)
-			}
+		const getRooms = async () => {
+			const parsedRooms: Room[] = await fetchRooms()
+			setRooms(parsedRooms)
 		}
-		fetchRooms()
+		getRooms()
 	}, [])
 
 	return (

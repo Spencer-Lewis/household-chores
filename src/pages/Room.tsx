@@ -4,56 +4,35 @@ import { useParams } from 'react-router-dom'
 import ChoreModal from '../components/ChoreModal'
 import NavBar from 'components/NavBar'
 import { Chore, Room } from '../types'
+import {
+	fetchRoom,
+	deleteChore,
+	updateChore,
+	createChore
+} from 'api/choresServiceApiClient'
 
 const RoomDetail: React.FC = () => {
-	const { roomId } = useParams<{ roomId: string }>() // Access roomId from route params
+	const { roomId } = useParams<{ roomId: string }>()
 	const [choreModalOpen, setChoreModalOpen] = useState(false)
 	const [room, setRoom] = useState<Room | null>(null)
 	const [chores, setChores] = useState<Chore[]>([])
-	const [selectedChore, setSelectedChore] = useState<Chore | null>(null) // Add selectedChore state
+	const [selectedChore, setSelectedChore] = useState<Chore | null>(null)
 
 	useEffect(() => {
 		const fetchRoomAndChores = async () => {
-			try {
-				// Fetch room data from API
-				const roomResponse = await fetch(
-					`https://chores-service.onrender.com/rooms/${roomId}`
-				)
-				const roomJson = await roomResponse.json()
-				const room: Room = {
-					_id: roomJson._id,
-					name: roomJson.name,
-					chores: roomJson.chores.map(chore => {
-						chore.dueDate = new Date(chore.dueDate)
-						return chore
-					})
-				}
-				setRoom(room)
-				setChores(room.chores)
-			} catch (error) {
-				console.error('Failed to fetch room and chores data', error)
-			}
+			const fetchedRoom: Room = await fetchRoom(roomId)
+			setRoom(fetchedRoom)
+			setChores(fetchedRoom.chores)
 		}
-
 		fetchRoomAndChores()
 	}, [roomId])
 
-	const handleAddChore = async (chore: Chore, choreId?: number) => {
+	const handleSaveChore = async (chore: Chore, choreId?: number) => {
 		chore.roomName = room?.name
 		try {
 			// If choreId is provided, update existing chore
 			if (choreId != null) {
-				await fetch(
-					`https://chores-service.onrender.com/chores/room/${roomId}/chore/${choreId}`,
-					{
-						method: 'PUT',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(chore)
-					}
-				)
-
+				await updateChore(roomId, chore, choreId)
 				setChores(prevChores =>
 					prevChores.map(prevChore =>
 						prevChore._id === choreId ? { ...chore, _id: choreId } : prevChore
@@ -61,16 +40,7 @@ const RoomDetail: React.FC = () => {
 				)
 			} else {
 				// If choreId is not provided, add new chore
-				await fetch(
-					`https://chores-service.onrender.com/chores/room/${roomId}`,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(chore)
-					}
-				)
+				await createChore(roomId, chore)
 				setChores([...chores, chore])
 			}
 		} catch (error) {
@@ -80,13 +50,7 @@ const RoomDetail: React.FC = () => {
 
 	const handleDeleteChore = async (choreId: number) => {
 		try {
-			await fetch(
-				`https://chores-service.onrender.com/chores/room/${roomId}/chore/${choreId}`,
-				{
-					method: 'DELETE'
-				}
-			)
-
+			await deleteChore(roomId, choreId)
 			setChores(chores.filter(chore => chore._id !== choreId))
 		} catch (error) {
 			console.error('Failed to delete chore', error)
@@ -135,7 +99,7 @@ const RoomDetail: React.FC = () => {
 								setChoreModalOpen(false)
 							}}
 							onSave={(chore, choreId) => {
-								handleAddChore(chore, choreId) // Pass choreId to handleAddChore for editing scenario
+								handleSaveChore(chore, choreId) // Pass choreId to handleSaveChore for editing scenario
 								setSelectedChore(null) // Reset selectedChore after saving a chore
 								setChoreModalOpen(false)
 							}}
