@@ -18,9 +18,9 @@ const RoomsPage = () => {
 
 	const onCreateRoom = async (roomData: Room) => {
 		setRoomModalOpen(false)
-		await createRoom(roomData)
+		const createdRoom = await createRoom(roomData)
 		const updatedRooms = [...rooms]
-		updatedRooms.push(roomData)
+		updatedRooms.push(createdRoom)
 		setRooms(updatedRooms)
 	}
 

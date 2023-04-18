@@ -1,8 +1,10 @@
 import { Chore, FrequencyUnit, Room } from 'types'
 
-const HOST_URL = 'https://chores-service.onrender.com'
-
+// LOCAL BACKEND SERVICE URL
 // const HOST_URL = "http://localhost:3001"
+
+// DEPLOYED BACKEND SERVICE URL
+const HOST_URL = 'https://chores-service.onrender.com'
 
 // Fetch all rooms
 export const fetchRooms = async () => {
@@ -45,18 +47,21 @@ export const fetchRoom = async roomId => {
 
 // Create room
 export const createRoom = async (roomData: Room) => {
-	return await fetch('https://chores-service.onrender.com/rooms', {
+	const roomResponse = await fetch(`${HOST_URL}/rooms`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(roomData)
 	})
+	const roomJson = await roomResponse.json()
+	roomData._id = roomJson._id
+	return roomData
 }
 
 // Delete room
 export const deleteRoom = async (roomId: any) => {
-	return await fetch(`https://chores-service.onrender.com/rooms/${roomId}`, {
+	return await fetch(`${HOST_URL}/rooms/${roomId}`, {
 		method: 'DELETE'
 	})
 }
@@ -90,37 +95,29 @@ export const updateChoreCompleted = async (chore: Chore, room: Room) => {
 }
 
 export const updateChore = async (roomId: any, chore: Chore, choreId: any) => {
-	const updatedChore = await fetch(
-		`${HOST_URL}/chores/room/${roomId}/chore/${choreId}`,
-		{
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(chore)
-		}
-	)
-	// TODO cast updatedChore to a Chore class
-	return updatedChore
+	return await fetch(`${HOST_URL}/chores/room/${roomId}/chore/${choreId}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(chore)
+	})
 }
 
 export const createChore = async (roomId: any, chore: Chore) => {
-	const createdChore = await fetch(`${HOST_URL}/chores/room/${roomId}`, {
+	const createChoreResponse = await fetch(`${HOST_URL}/chores/room/${roomId}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(chore)
 	})
-	// TODO cast createdChore to a Chore class
-	return createdChore
+	await createChoreResponse.json()
+	return chore
 }
 
 export const deleteChore = async (roomId: any, choreId: any) => {
-	return await fetch(
-		`https://chores-service.onrender.com/chores/room/${roomId}/chore/${choreId}`,
-		{
-			method: 'DELETE'
-		}
-	)
+	return await fetch(`${HOST_URL}/chores/room/${roomId}/chore/${choreId}`, {
+		method: 'DELETE'
+	})
 }

@@ -15,7 +15,11 @@ export const ChoresDueList: React.FC<Props> = ({
 	const [selectedChoreId, setSelectedChoreId] = useState<number | null>(null)
 
 	const handleChoreItemClick = (choreId: number) => {
-		setSelectedChoreId(choreId)
+		if (choreId == selectedChoreId) {
+			setSelectedChoreId(null)
+		} else {
+			setSelectedChoreId(choreId)
+		}
 	}
 
 	const handleCheckmarkClick = (e: React.MouseEvent, chore: Chore) => {

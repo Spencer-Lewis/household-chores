@@ -8,7 +8,8 @@ import {
 	fetchRoom,
 	deleteChore,
 	updateChore,
-	createChore
+	createChore,
+	updateChoreCompleted
 } from 'api/choresServiceApiClient'
 
 const RoomDetail: React.FC = () => {
@@ -18,6 +19,14 @@ const RoomDetail: React.FC = () => {
 	const [chores, setChores] = useState<Chore[]>([])
 	const [selectedChore, setSelectedChore] = useState<Chore | null>(null)
 
+	// Function to handle clicking on checkmark button
+	const handleCheckmarkClick = async (chore: Chore) => {
+		if (room) {
+			await updateChoreCompleted(chore, room)
+			setChores([...chores, chore])
+		}
+	}
+
 	useEffect(() => {
 		const fetchRoomAndChores = async () => {
 			const fetchedRoom: Room = await fetchRoom(roomId)
@@ -25,7 +34,7 @@ const RoomDetail: React.FC = () => {
 			setChores(fetchedRoom.chores)
 		}
 		fetchRoomAndChores()
-	}, [roomId])
+	}, [roomId, chores])
 
 	const handleSaveChore = async (chore: Chore, choreId?: number) => {
 		chore.roomName = room?.name
@@ -40,8 +49,8 @@ const RoomDetail: React.FC = () => {
 				)
 			} else {
 				// If choreId is not provided, add new chore
-				await createChore(roomId, chore)
-				setChores([...chores, chore])
+				const createdChore = await createChore(roomId, chore)
+				setChores([...chores, createdChore])
 			}
 		} catch (error) {
 			console.error('Failed to add or update chore', error)
@@ -86,9 +95,10 @@ const RoomDetail: React.FC = () => {
 									chore={chore}
 									key={chore._id}
 									onEdit={() => {
-										setSelectedChore(chore) // Set selectedChore when editing a chore
+										setSelectedChore(chore)
 										setChoreModalOpen(true)
 									}}
+									onCheckmarkClick={handleCheckmarkClick}
 								/>
 							))}
 						</div>
