@@ -6,8 +6,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, useLocation } from 'react-router-dom'
 
-const NavBar = () => {
-	// Get the current route path
+const NavBar = (choresDue: any, tasks: any) => {
 	const location = useLocation()
 	const currentPath = location.pathname
 	return (
@@ -23,17 +22,8 @@ const NavBar = () => {
 						: 'text-white'
 				}`}
 			>
-				<FontAwesomeIcon icon={faCheckCircle} className='mr-2 text-lg' />
-				<span className='text-lg font-bold'>Chores</span>
-			</Link>
-			<Link
-				to='/rooms'
-				className={`${
-					currentPath.includes('room') ? 'text-green-500' : 'text-white '
-				}`}
-			>
-				<FontAwesomeIcon icon={faHome} className='mr-2 text-lg' />
-				<span className='text-lg font-bold'>Rooms</span>
+				<FontAwesomeIcon icon={faCheckCircle} className='text-md mr-2' />
+				<span className='text-md font-bold'>Chores Due</span>
 			</Link>
 			<Link
 				to='/tasks'
@@ -41,8 +31,17 @@ const NavBar = () => {
 					currentPath.includes('tasks') ? 'text-green-500' : 'text-white'
 				}`}
 			>
-				<FontAwesomeIcon icon={faScrewdriverWrench} className='mr-2 text-lg' />
-				<span className='text-lg font-bold'>Tasks</span>
+				<FontAwesomeIcon icon={faScrewdriverWrench} className='text-md mr-2' />
+				<span className='text-md font-bold'>Tasks</span>
+			</Link>
+			<Link
+				to='/rooms'
+				className={`${
+					currentPath.includes('room') ? 'text-green-500' : 'text-white '
+				}`}
+			>
+				<FontAwesomeIcon icon={faHome} className='text-md mr-2' />
+				<span className='text-md font-bold'>Chore Setup</span>
 			</Link>
 		</nav>
 	)

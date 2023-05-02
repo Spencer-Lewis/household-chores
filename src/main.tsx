@@ -1,4 +1,5 @@
 import App from 'App'
+import AppContextProvider from 'AppContextProvider'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -23,7 +24,9 @@ if (container) {
 	root.render(
 		<StrictMode>
 			<QueryClientProvider client={queryClient}>
-				<App />
+				<AppContextProvider>
+					<App />
+				</AppContextProvider>
 			</QueryClientProvider>
 		</StrictMode>
 	)

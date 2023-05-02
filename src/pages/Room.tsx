@@ -1,8 +1,7 @@
 import ChoreComponent from 'components/Chore'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import ChoreModal from '../components/ChoreModal'
-import NavBar from 'components/NavBar'
 import { Chore, Room } from '../types'
 import {
 	fetchRoom,
@@ -11,30 +10,40 @@ import {
 	createChore,
 	updateChoreCompleted
 } from 'api/choresServiceApiClient'
+import { AppContext } from '../AppContextProvider'
 
-const RoomDetail: React.FC = () => {
+const RoomDetail: React.FC = (initialState: any) => {
+	const { rooms } = useContext(AppContext)
 	const { roomId } = useParams<{ roomId: string }>()
 	const [choreModalOpen, setChoreModalOpen] = useState(false)
 	const [room, setRoom] = useState<Room | null>(null)
-	const [chores, setChores] = useState<Chore[]>([])
 	const [selectedChore, setSelectedChore] = useState<Chore | null>(null)
 
 	// Function to handle clicking on checkmark button
 	const handleCheckmarkClick = async (chore: Chore) => {
 		if (room) {
 			await updateChoreCompleted(chore, room)
-			setChores([...chores, chore])
+			setRoom(prevRoom => ({
+				...prevRoom,
+				chores: prevRoom.chores.map(prevChore =>
+					prevChore._id === chore._id
+						? { ...prevChore, isCompleted: true }
+						: prevChore
+				)
+			}))
 		}
 	}
 
 	useEffect(() => {
 		const fetchRoomAndChores = async () => {
-			const fetchedRoom: Room = await fetchRoom(roomId)
-			setRoom(fetchedRoom)
-			setChores(fetchedRoom.chores)
+			let fetchedRoom: Room
+			if (rooms && rooms.length > 0) {
+				fetchedRoom = rooms.find(room => room._id === roomId) as Room
+				setRoom(fetchedRoom)
+			}
 		}
 		fetchRoomAndChores()
-	}, [roomId, chores])
+	}, [roomId, rooms])
 
 	const handleSaveChore = async (chore: Chore, choreId?: number) => {
 		chore.roomName = room?.name
@@ -42,15 +51,19 @@ const RoomDetail: React.FC = () => {
 			// If choreId is provided, update existing chore
 			if (choreId != null) {
 				await updateChore(roomId, chore, choreId)
-				setChores(prevChores =>
-					prevChores.map(prevChore =>
+				setRoom(prevRoom => ({
+					...prevRoom,
+					chores: prevRoom.chores.map(prevChore =>
 						prevChore._id === choreId ? { ...chore, _id: choreId } : prevChore
 					)
-				)
+				}))
 			} else {
 				// If choreId is not provided, add new chore
 				const createdChore = await createChore(roomId, chore)
-				setChores([...chores, createdChore])
+				setRoom(prevRoom => ({
+					...prevRoom,
+					chores: [...prevRoom.chores, createdChore]
+				}))
 			}
 		} catch (error) {
 			console.error('Failed to add or update chore', error)
@@ -60,7 +73,10 @@ const RoomDetail: React.FC = () => {
 	const handleDeleteChore = async (choreId: number) => {
 		try {
 			await deleteChore(roomId, choreId)
-			setChores(chores.filter(chore => chore._id !== choreId))
+			setRoom(prevRoom => ({
+				...prevRoom,
+				chores: prevRoom.chores.filter(chore => chore._id !== choreId)
+			}))
 		} catch (error) {
 			console.error('Failed to delete chore', error)
 		}
@@ -90,7 +106,7 @@ const RoomDetail: React.FC = () => {
 							</button>
 						</div>
 						<div className='grid max-h-[32rem] grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
-							{chores.map(chore => (
+							{room.chores.map(chore => (
 								<ChoreComponent
 									chore={chore}
 									key={chore._id}
@@ -120,7 +136,6 @@ const RoomDetail: React.FC = () => {
 					</div>
 				</div>
 			</div>
-			<NavBar />
 		</div>
 	)
 }

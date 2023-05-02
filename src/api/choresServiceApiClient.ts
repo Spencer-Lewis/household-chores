@@ -85,13 +85,15 @@ export const updateChoreCompleted = async (chore: Chore, room: Room) => {
 	}
 	chore.dueDate = newDueDate
 
-	return await fetch(`${HOST_URL}/chores/room/${room._id}/chore/${chore._id}`, {
+	await fetch(`${HOST_URL}/chores/room/${room._id}/chore/${chore._id}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(chore)
 	})
+
+	return chore
 }
 
 export const updateChore = async (roomId: any, chore: Chore, choreId: any) => {

@@ -1,16 +1,16 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import RoomList from 'components/RoomList'
-import { useState, useEffect } from 'react'
+import { useContext, useState } from 'react'
 import RoomModal from '../components/RoomModal'
 import { Room } from '../types'
-import NavBar from 'components/NavBar'
-import { fetchRooms, createRoom, deleteRoom } from 'api/choresServiceApiClient'
+import { createRoom, deleteRoom } from 'api/choresServiceApiClient'
+import { AppContext } from '../AppContextProvider'
 
 const RoomsPage = () => {
+	const { rooms, setRooms } = useContext(AppContext)
 	const [roomModalOpen, setRoomModalOpen] = useState(false)
 	const [deleteMode, setDeleteMode] = useState(false)
-	const [rooms, setRooms] = useState<Room[]>([])
 
 	const handleAddRoom = () => {
 		setRoomModalOpen(true)
@@ -19,9 +19,7 @@ const RoomsPage = () => {
 	const onCreateRoom = async (roomData: Room) => {
 		setRoomModalOpen(false)
 		const createdRoom = await createRoom(roomData)
-		const updatedRooms = [...rooms]
-		updatedRooms.push(createdRoom)
-		setRooms(updatedRooms)
+		setRooms([...rooms, createdRoom])
 	}
 
 	const handleDeleteRoom = async (roomId: number) => {
@@ -30,17 +28,9 @@ const RoomsPage = () => {
 			const updatedRooms = rooms.filter(room => room._id !== roomId)
 			setRooms(updatedRooms)
 		} catch (error) {
-			console.error('Failed to delete chore', error)
+			console.error('Failed to delete room', error)
 		}
 	}
-
-	useEffect(() => {
-		const getRooms = async () => {
-			const parsedRooms: Room[] = await fetchRooms()
-			setRooms(parsedRooms)
-		}
-		getRooms()
-	}, [])
 
 	return (
 		<div className='min-h-screen bg-gray-900 text-white'>
@@ -76,7 +66,6 @@ const RoomsPage = () => {
 					/>
 				</div>
 			</div>
-			<NavBar />
 		</div>
 	)
 }

@@ -1,21 +1,19 @@
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TaskComponent from 'components/Task'
-import { useState, useEffect } from 'react'
+import { useState, useContext } from 'react'
 import TaskModal from '../components/TaskModal'
 import { Task } from '../types'
-import NavBar from 'components/NavBar'
 import {
 	fetchTasks,
 	createTask,
 	deleteTask,
 	updateTask
 } from 'api/choresServiceApiClient'
+import { AppContext } from '../AppContextProvider'
 
-const TasksPage = () => {
+const TasksPage = (initialState: any) => {
 	const [taskModalOpen, setTaskModalOpen] = useState(false)
-	const [tasks, setTasks] = useState<Task[]>([])
 	const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+	const { tasks, setTasks } = useContext(AppContext)
 
 	const handleDeleteTask = async (taskId: number) => {
 		try {
@@ -54,14 +52,6 @@ const TasksPage = () => {
 			handleDeleteTask(task._id)
 		}
 	}
-
-	useEffect(() => {
-		const getTasks = async () => {
-			const parsedTasks: Task[] = await fetchTasks()
-			setTasks(parsedTasks)
-		}
-		getTasks()
-	}, [])
 
 	return (
 		<div className='min-h-screen bg-gray-900 text-white'>
@@ -111,7 +101,6 @@ const TasksPage = () => {
 					/>
 				</div>
 			</div>
-			<NavBar />
 		</div>
 	)
 }

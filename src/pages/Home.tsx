@@ -1,47 +1,67 @@
+import { useContext, useEffect, useState } from 'react'
 import { ChoresDueList } from 'components/ChoresDueList'
-import NavBar from 'components/NavBar'
-import { useState, useEffect } from 'react'
-import { Chore, FrequencyUnit, Room } from 'types'
+import { Chore, Room } from 'types'
 import isChoreDueToday from 'utils/isChoreDueToday'
-import { fetchRooms, updateChoreCompleted } from 'api/choresServiceApiClient'
+import { updateChoreCompleted } from 'api/choresServiceApiClient'
+import { AppContext } from '../AppContextProvider'
 
 const HomeDashboard = () => {
-	const [rooms, setRooms] = useState<Room[]>([])
-	// Get chores that are due today from all rooms
-	const choresDueToday = rooms.reduce((acc: Chore[], room: Room) => {
-		const choresDue = room.chores.filter(isChoreDueToday)
-		return [...acc, ...choresDue]
-	}, [])
-	// State to keep track of completed chores
-	const [completedChores, setCompletedChores] = useState<number>(0)
+	const { rooms, setRooms } = useContext(AppContext)
 
-	// Function to mark a chore as completed
-	const markChoreAsCompleted = async (chore: Chore) => {
-		const updateRoom = rooms.filter(room => room.name == chore.roomName)
-		if (updateRoom.length > 0) {
-			const roomToUpdate = updateRoom[0]
-			await updateChoreCompleted(chore, roomToUpdate)
-			setCompletedChores(completedChores + 1)
-		}
-	}
-
-	// Function to handle clicking on checkmark button
-	const handleCheckmarkClick = (chore: Chore) => {
-		markChoreAsCompleted(chore)
-	}
+	const [choresDueToday, setChoresDueToday] = useState<Chore[]>([])
 
 	useEffect(() => {
-		const getRooms = async () => {
-			const parsedRooms: Room[] = await fetchRooms()
-			setRooms(parsedRooms)
+		const calculateChoresDueToday = () => {
+			const dueToday: Chore[] = rooms.reduce((acc: Chore[], room: Room) => {
+				const choresDue = room.chores.filter(isChoreDueToday)
+				return [...acc, ...choresDue]
+			}, [])
+			setChoresDueToday(dueToday)
 		}
-		getRooms()
-	}, [completedChores])
+		calculateChoresDueToday()
+	}, [rooms])
+
+	const updateRoomsForUpdatedChore = (
+		updatedChore: Chore,
+		chore: Chore
+	): void => {
+		const updatedRooms = rooms.map((room: Room) => {
+			if (room.name === chore.roomName) {
+				const updatedChores = room.chores.map((c: Chore) => {
+					if (c._id === updatedChore._id) {
+						return updatedChore
+					}
+					return c
+				})
+				return {
+					...room,
+					chores: updatedChores
+				}
+			}
+			return room
+		})
+		setRooms(updatedRooms)
+	}
+
+	const markChoreAsCompleted = async (chore: Chore): Promise<void> => {
+		const updateRoom = rooms.filter(
+			(room: Room) => room.name === chore.roomName
+		)
+		if (updateRoom.length > 0) {
+			const roomToUpdate = updateRoom[0]
+			const updatedChore = await updateChoreCompleted(chore, roomToUpdate)
+			if (updatedChore) updateRoomsForUpdatedChore(updatedChore, chore)
+		}
+	}
+
+	const handleCheckmarkClick = (chore: Chore): void => {
+		markChoreAsCompleted(chore)
+	}
 
 	return (
 		<div>
 			<div
-				className='fixed top-0 left-0 right-0 z-50 py-8'
+				className='fixed top-0 left-0 right-0 z-50 bg-gray-900 py-8'
 				style={{ paddingBottom: '60px' }} // Adjust the value to match the height of your NavBar
 			>
 				<div className='container mx-auto px-4'>
@@ -59,7 +79,6 @@ const HomeDashboard = () => {
 					</div>
 				</div>
 			</div>
-			<NavBar />
 		</div>
 	)
 }
