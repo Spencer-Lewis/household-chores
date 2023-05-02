@@ -46,7 +46,7 @@ const HomeDashboard = () => {
 			>
 				<div className='container mx-auto px-4'>
 					<h1 className='mb-8 flex justify-center text-4xl font-bold'>
-						{choresDueToday.length} Tasks Due
+						{choresDueToday.length} Chores Due
 					</h1>
 					<div
 						className='max-h-[35.5rem] overflow-y-auto'

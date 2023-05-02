@@ -1,10 +1,10 @@
-import { Chore, FrequencyUnit, Room } from 'types'
+import { Chore, FrequencyUnit, Room, Task } from 'types'
 
 // LOCAL BACKEND SERVICE URL
-// const HOST_URL = "http://localhost:3001"
+const HOST_URL = 'http://localhost:3001'
 
 // DEPLOYED BACKEND SERVICE URL
-const HOST_URL = 'https://chores-service.onrender.com'
+// const HOST_URL = 'https://chores-service.onrender.com'
 
 // Fetch all rooms
 export const fetchRooms = async () => {
@@ -118,6 +118,72 @@ export const createChore = async (roomId: any, chore: Chore) => {
 
 export const deleteChore = async (roomId: any, choreId: any) => {
 	return await fetch(`${HOST_URL}/chores/room/${roomId}/chore/${choreId}`, {
+		method: 'DELETE'
+	})
+}
+
+export const fetchTasks = async () => {
+	try {
+		// Fetch Tasks from API
+		const tasksResponse = await fetch(`${HOST_URL}/tasks`)
+		const tasksJson = await tasksResponse.json()
+		const parsedTasks = tasksJson.map(task => {
+			let parsedTask: Task = {
+				_id: task._id,
+				name: task.name,
+				description: task.description,
+				contact: task.contact
+			}
+			return parsedTask
+		})
+		return parsedTasks
+	} catch (error) {
+		console.error('Failed to fetch tasks', error)
+	}
+}
+
+// Fetch one task by id
+export const fetchTask = async taskId => {
+	// Fetch task from API
+	const taskResponse = await fetch(`${HOST_URL}/tasks/${taskId}`)
+	const taskJson = await taskResponse.json()
+	const task: Task = {
+		_id: taskJson._id,
+		name: taskJson.name,
+		description: taskJson.description,
+		contact: taskJson.contact
+	}
+	return task
+}
+
+// Create task
+export const createTask = async (taskData: Task) => {
+	const taskResponse = await fetch(`${HOST_URL}/tasks`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(taskData)
+	})
+	const taskJson = await taskResponse.json()
+	taskData._id = taskJson._id
+	return taskData
+}
+
+// Update task
+export const updateTask = async (taskId: any, taskData: Task) => {
+	return await fetch(`${HOST_URL}/tasks/${taskId}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(taskData)
+	})
+}
+
+// Delete task
+export const deleteTask = async (taskId: any) => {
+	return await fetch(`${HOST_URL}/tasks/${taskId}`, {
 		method: 'DELETE'
 	})
 }

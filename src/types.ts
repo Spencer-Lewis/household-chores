@@ -21,6 +21,13 @@ export interface Room {
 	chores: Chore[] // array of chores associated with the room
 }
 
+export interface Task {
+	_id?: number
+	name: string
+	description?: string
+	contact?: string
+}
+
 // Main state interface to represent the state of the application
 export interface AppState {
 	rooms: Room[] // array of rooms in the house
