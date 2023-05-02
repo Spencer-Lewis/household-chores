@@ -1,10 +1,10 @@
 import { Chore, FrequencyUnit, Room, Task } from 'types'
 
 // LOCAL BACKEND SERVICE URL
-const HOST_URL = 'http://localhost:3001'
+// const HOST_URL = 'http://localhost:3001'
 
 // DEPLOYED BACKEND SERVICE URL
-// const HOST_URL = 'https://chores-service.onrender.com'
+const HOST_URL = 'https://chores-service.onrender.com'
 
 // Fetch all rooms
 export const fetchRooms = async () => {
