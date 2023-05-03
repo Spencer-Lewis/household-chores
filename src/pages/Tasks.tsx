@@ -57,7 +57,10 @@ const TasksPage = (initialState: any) => {
 		<div className='min-h-screen bg-gray-900 text-white'>
 			<div className='fixed top-0 left-0 right-0 z-50 py-8'>
 				<div className='container mx-auto px-4'>
-					<h1 className='mb-2 flex justify-center text-4xl font-bold'>Tasks</h1>
+					<h1 className='mb-2 flex justify-center text-4xl font-bold'>
+						<span className='mr-2 text-green-500'>{tasks.length}</span>
+						Tasks
+					</h1>
 					<div>
 						<div className='mt-4 flex justify-center'>
 							<button

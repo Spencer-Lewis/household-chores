@@ -33,7 +33,7 @@ export const ChoresDueList: React.FC<Props> = ({
 				choresDueToday.map(chore => (
 					<li
 						key={chore._id}
-						className='relative cursor-pointer rounded-md bg-gray-700 py-4 px-4 text-white hover:bg-gray-600'
+						className='relative cursor-pointer rounded-md bg-gray-700 py-3 px-4 text-white hover:bg-gray-600'
 						onClick={() => handleChoreItemClick(chore._id)}
 					>
 						<div>
@@ -52,7 +52,9 @@ export const ChoresDueList: React.FC<Props> = ({
 							>
 								<FontAwesomeIcon
 									icon={faCheckCircle}
-									className='text-5xl text-green-500'
+									className={`text-4xl text-green-500 ${
+										selectedChoreId === chore._id ? 'animate-checkmark' : ''
+									}`}
 								/>
 								<span className='pointer-events-none absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-green-500 opacity-0'></span>
 							</button>

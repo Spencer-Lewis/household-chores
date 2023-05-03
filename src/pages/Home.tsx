@@ -62,15 +62,16 @@ const HomeDashboard = () => {
 		<div>
 			<div
 				className='fixed top-0 left-0 right-0 z-50 bg-gray-900 py-8'
-				style={{ paddingBottom: '60px' }} // Adjust the value to match the height of your NavBar
+				style={{ paddingBottom: '60px' }}
 			>
 				<div className='container mx-auto px-4'>
 					<h1 className='mb-8 flex justify-center text-4xl font-bold'>
-						{choresDueToday.length} Chores Due
+						<span className='mr-2 text-green-500'>{choresDueToday.length}</span>{' '}
+						Chores Due
 					</h1>
 					<div
 						className='max-h-[35.5rem] overflow-y-auto'
-						style={{ marginBottom: '60px' }} // Adjust the value to match the height of your NavBar
+						style={{ marginBottom: '60px' }}
 					>
 						<ChoresDueList
 							choresDueToday={choresDueToday}

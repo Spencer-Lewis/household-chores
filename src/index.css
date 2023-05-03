@@ -1,4 +1,4 @@
-@import 'react-datepicker/dist/react-datepicker.css';
+@import url('react-datepicker/dist/react-datepicker.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -25,4 +25,18 @@
 		font-display: swap;
 		src: url('/fonts/Inter-Bold.woff2') format('woff2');
 	}
+}
+
+@keyframes checkmark-rotate {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-checkmark {
+    animation: checkmark-rotate 0.35s ease-out forwards;
 }

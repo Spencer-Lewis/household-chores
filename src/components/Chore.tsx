@@ -45,7 +45,9 @@ const ChoreComponent: React.FC<ChoreComponentProps> = ({
 				>
 					<FontAwesomeIcon
 						icon={faCheckCircle}
-						className='text-2xl text-green-500'
+						className={`text-2xl text-green-500 ${
+							selectedForCompletion ? 'animate-checkmark' : ''
+						}`}
 					/>
 					<span className='pointer-events-none absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-green-500 opacity-0'></span>
 				</button>
