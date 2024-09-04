@@ -19,8 +19,17 @@ const HomeDashboard = () => {
 	}, [chores])
 
 	const handleCheckmarkClick = async (chore: Chore): Promise<void> => {
-		const room = rooms.filter(room => room.name != chore.name)
-		await markChoreCompleted(room[0].id, chore)
+		// Find the correct room by matching room names, not the other way around
+		const room = rooms.find(room => room.name === chore.roomName)
+
+		// Check if the room exists before proceeding
+		if (!room) {
+			console.error(`Room not found for chore: ${chore.name}`)
+			return
+		}
+
+		// Call markChoreCompleted with the correct room ID and chore
+		await markChoreCompleted(room.id, chore)
 	}
 
 	return (
