@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Task } from 'types'
 
 interface TaskModalProps {
@@ -28,7 +28,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
 		}
 		if (taskContact) newTask.contact = taskContact
 		if (taskDescription) newTask.description = taskDescription
-		onSaveTask(newTask, task?._id)
+		onSaveTask(newTask, task?.id)
 		onClose()
 	}
 

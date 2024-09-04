@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Room } from 'types'
 
 interface RoomModalProps {
@@ -14,6 +14,13 @@ const RoomModal: React.FC<RoomModalProps> = ({
 }) => {
 	const [roomName, setRoomName] = useState('')
 
+	// Clear the roomName state when the modal is opened
+	useEffect(() => {
+		if (isOpen) {
+			setRoomName('')
+		}
+	}, [isOpen])
+
 	const handleCreateRoom = () => {
 		if (roomName.trim() === '') {
 			// Perform validation if required
@@ -21,8 +28,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
 		}
 
 		let newRoom: Room = {
-			name: roomName,
-			chores: []
+			name: roomName
 		}
 		onCreateRoom(newRoom)
 		onClose()
@@ -55,7 +61,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
 					<div className='flex justify-end'>
 						<button
 							type='button'
-							className='mr-2   rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-700'
+							className='mr-2 rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-700'
 							onClick={handleCreateRoom}
 						>
 							Add

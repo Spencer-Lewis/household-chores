@@ -1,14 +1,14 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { createRoom, deleteRoom } from 'api/choresServiceApiClient'
 import RoomList from 'components/RoomList'
 import { useContext, useState } from 'react'
+import { AppContext } from '../AppContextProvider'
 import RoomModal from '../components/RoomModal'
 import { Room } from '../types'
-import { createRoom, deleteRoom } from 'api/choresServiceApiClient'
-import { AppContext } from '../AppContextProvider'
 
 const RoomsPage = () => {
-	const { rooms, setRooms } = useContext(AppContext)
+	const { rooms, setRooms, chores, updateRoom } = useContext(AppContext)
 	const [roomModalOpen, setRoomModalOpen] = useState(false)
 	const [deleteMode, setDeleteMode] = useState(false)
 
@@ -19,14 +19,13 @@ const RoomsPage = () => {
 	const onCreateRoom = async (roomData: Room) => {
 		setRoomModalOpen(false)
 		const createdRoom = await createRoom(roomData)
-		setRooms([...rooms, createdRoom])
+		setRooms(prevRooms => [...prevRooms, createdRoom])
 	}
 
-	const handleDeleteRoom = async (roomId: number) => {
+	const handleDeleteRoom = async (roomId: string) => {
 		try {
 			await deleteRoom(roomId)
-			const updatedRooms = rooms.filter(room => room._id !== roomId)
-			setRooms(updatedRooms)
+			setRooms(prevRooms => prevRooms.filter(room => room.id !== roomId))
 		} catch (error) {
 			console.error('Failed to delete room', error)
 		}
@@ -55,6 +54,7 @@ const RoomsPage = () => {
 					<div className='max-h-[33.5rem] overflow-y-auto'>
 						<RoomList
 							rooms={rooms}
+							chores={chores}
 							onDeleteRoom={handleDeleteRoom}
 							deleteMode={deleteMode}
 						/>

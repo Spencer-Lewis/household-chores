@@ -1,14 +1,9 @@
+import { createTask, deleteTask, updateTask } from 'api/choresServiceApiClient'
 import TaskComponent from 'components/Task'
-import { useState, useContext } from 'react'
+import { useContext, useState } from 'react'
+import { AppContext } from '../AppContextProvider'
 import TaskModal from '../components/TaskModal'
 import { Task } from '../types'
-import {
-	fetchTasks,
-	createTask,
-	deleteTask,
-	updateTask
-} from 'api/choresServiceApiClient'
-import { AppContext } from '../AppContextProvider'
 
 const TasksPage = (initialState: any) => {
 	const [taskModalOpen, setTaskModalOpen] = useState(false)
@@ -18,7 +13,7 @@ const TasksPage = (initialState: any) => {
 	const handleDeleteTask = async (taskId: number) => {
 		try {
 			await deleteTask(taskId)
-			const updatedTasks = tasks.filter(task => task._id !== taskId)
+			const updatedTasks = tasks.filter(task => task.id !== taskId)
 			setTasks(updatedTasks)
 		} catch (error) {
 			console.error('Failed to delete task', error)
@@ -32,7 +27,7 @@ const TasksPage = (initialState: any) => {
 				await updateTask(taskId, task)
 				setTasks(prevTasks =>
 					prevTasks.map(prevTask =>
-						prevTask._id === taskId ? { ...task, _id: taskId } : prevTask
+						prevTask.id === taskId ? { ...task, id: taskId } : prevTask
 					)
 				)
 			} else {
@@ -48,8 +43,8 @@ const TasksPage = (initialState: any) => {
 
 	// Function to handle clicking on checkmark button
 	const handleCheckmarkClick = (task: Task) => {
-		if (task._id) {
-			handleDeleteTask(task._id)
+		if (task.id) {
+			handleDeleteTask(task.id)
 		}
 	}
 
@@ -79,7 +74,7 @@ const TasksPage = (initialState: any) => {
 							{tasks.length > 0 ? (
 								tasks.map(task => (
 									<TaskComponent
-										key={task._id}
+										key={task.id}
 										task={task}
 										onEdit={() => {
 											setSelectedTask(task)

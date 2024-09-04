@@ -6,7 +6,7 @@ export enum FrequencyUnit {
 
 // Chore interface to represent a chore
 export interface Chore {
-	_id?: number // unique identifier for the chore
+	id?: number // unique identifier for the chore
 	name: string // name of the chore
 	recurrence: number // recurrence frequency of the chore
 	unit: FrequencyUnit // recurrence unit of the chore
@@ -16,13 +16,12 @@ export interface Chore {
 
 // Room interface to represent a room
 export interface Room {
-	_id?: number // unique identifier for the room
+	id?: number // unique identifier for the room
 	name: string // name of the room
-	chores: Chore[] // array of chores associated with the room
 }
 
 export interface Task {
-	_id?: number
+	id?: number
 	name: string
 	description?: string
 	contact?: string

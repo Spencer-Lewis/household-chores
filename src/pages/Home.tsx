@@ -1,61 +1,26 @@
-import { useContext, useEffect, useState } from 'react'
 import { ChoresDueList } from 'components/ChoresDueList'
-import { Chore, Room } from 'types'
+import { useContext, useEffect, useState } from 'react'
+import { Chore } from 'types'
 import isChoreDueToday from 'utils/isChoreDueToday'
-import { updateChoreCompleted } from 'api/choresServiceApiClient'
 import { AppContext } from '../AppContextProvider'
 
 const HomeDashboard = () => {
-	const { rooms, setRooms } = useContext(AppContext)
+	const { chores, rooms, markChoreCompleted } = useContext(AppContext)
 
 	const [choresDueToday, setChoresDueToday] = useState<Chore[]>([])
 
 	useEffect(() => {
 		const calculateChoresDueToday = () => {
-			const dueToday: Chore[] = rooms.reduce((acc: Chore[], room: Room) => {
-				const choresDue = room.chores.filter(isChoreDueToday)
-				return [...acc, ...choresDue]
-			}, [])
+			const dueToday = chores.filter(isChoreDueToday)
 			setChoresDueToday(dueToday)
 		}
+
 		calculateChoresDueToday()
-	}, [rooms])
+	}, [chores])
 
-	const updateRoomsForUpdatedChore = (
-		updatedChore: Chore,
-		chore: Chore
-	): void => {
-		const updatedRooms = rooms.map((room: Room) => {
-			if (room.name === chore.roomName) {
-				const updatedChores = room.chores.map((c: Chore) => {
-					if (c._id === updatedChore._id) {
-						return updatedChore
-					}
-					return c
-				})
-				return {
-					...room,
-					chores: updatedChores
-				}
-			}
-			return room
-		})
-		setRooms(updatedRooms)
-	}
-
-	const markChoreAsCompleted = async (chore: Chore): Promise<void> => {
-		const updateRoom = rooms.filter(
-			(room: Room) => room.name === chore.roomName
-		)
-		if (updateRoom.length > 0) {
-			const roomToUpdate = updateRoom[0]
-			const updatedChore = await updateChoreCompleted(chore, roomToUpdate)
-			if (updatedChore) updateRoomsForUpdatedChore(updatedChore, chore)
-		}
-	}
-
-	const handleCheckmarkClick = (chore: Chore): void => {
-		markChoreAsCompleted(chore)
+	const handleCheckmarkClick = async (chore: Chore): Promise<void> => {
+		const room = rooms.filter(room => room.name != chore.name)
+		await markChoreCompleted(room[0].id, chore)
 	}
 
 	return (

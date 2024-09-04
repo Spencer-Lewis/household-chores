@@ -48,16 +48,17 @@ const ChoreModal: React.FC<ChoreModalProps> = ({
 			name: choreName,
 			recurrence: choreRecurrence,
 			unit: choreUnit,
-			dueDate: new Date(choreDueDate)
+			dueDate: new Date(choreDueDate),
+			roomName: room.name
 		}
 
-		onSave(updatedChore, chore?._id)
+		onSave(updatedChore, chore?.id)
 		onClose()
 	}
 
 	const handleDelete = () => {
 		if (chore) {
-			onDelete(chore._id || 1)
+			onDelete(chore.id || 1)
 			onClose()
 		}
 	}
@@ -145,7 +146,7 @@ const ChoreModal: React.FC<ChoreModalProps> = ({
 						/>
 					</div>
 					<div className='flex'>
-						{chore?._id ? (
+						{chore?.id ? (
 							<button
 								type='button'
 								className='mr-2 rounded-md px-4 py-2 text-red-500 hover:text-red-700'

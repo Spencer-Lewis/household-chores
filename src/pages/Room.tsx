@@ -1,82 +1,53 @@
-import ChoreComponent from 'components/Chore'
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import ChoreModal from '../components/ChoreModal'
-import { Chore, Room } from '../types'
-import {
-	fetchRoom,
-	deleteChore,
-	updateChore,
-	createChore,
-	updateChoreCompleted
-} from 'api/choresServiceApiClient'
 import { AppContext } from '../AppContextProvider'
+import ChoreComponent from '../components/Chore'
+import ChoreModal from '../components/ChoreModal'
+import { Chore } from '../types'
 
-const RoomDetail: React.FC = (initialState: any) => {
-	const { rooms } = useContext(AppContext)
+const RoomDetail: React.FC = () => {
+	const {
+		rooms,
+		chores,
+		markChoreCompleted,
+		updateChore,
+		deleteChore,
+		createChore
+	} = useContext(AppContext) || {}
 	const { roomId } = useParams<{ roomId: string }>()
 	const [choreModalOpen, setChoreModalOpen] = useState(false)
-	const [room, setRoom] = useState<Room | null>(null)
 	const [selectedChore, setSelectedChore] = useState<Chore | null>(null)
 
-	// Function to handle clicking on checkmark button
+	// Determine the current room and relevant chores based on roomId
+	const room = rooms.find(room => room.id === roomId) || null
+	const filteredChores = chores.filter(chore => chore.roomName === room.name)
+
 	const handleCheckmarkClick = async (chore: Chore) => {
 		if (room) {
-			await updateChoreCompleted(chore, room)
-			setRoom(prevRoom => ({
-				...prevRoom,
-				chores: prevRoom.chores.map(prevChore =>
-					prevChore._id === chore._id
-						? { ...prevChore, isCompleted: true }
-						: prevChore
-				)
-			}))
+			try {
+				await markChoreCompleted(roomId, chore)
+				// Since `markChoreCompleted` updates the context, there's no need to update local state
+			} catch (error) {
+				console.error('Failed to update chore completion', error)
+			}
 		}
 	}
 
-	useEffect(() => {
-		const fetchRoomAndChores = async () => {
-			let fetchedRoom: Room
-			if (rooms && rooms.length > 0) {
-				fetchedRoom = rooms.find(room => room._id === roomId) as Room
-				setRoom(fetchedRoom)
-			}
-		}
-		fetchRoomAndChores()
-	}, [roomId, rooms])
-
-	const handleSaveChore = async (chore: Chore, choreId?: number) => {
-		chore.roomName = room?.name
+	const handleSaveChore = async (chore: Chore, choreId?: string) => {
 		try {
-			// If choreId is provided, update existing chore
 			if (choreId != null) {
-				await updateChore(roomId, chore, choreId)
-				setRoom(prevRoom => ({
-					...prevRoom,
-					chores: prevRoom.chores.map(prevChore =>
-						prevChore._id === choreId ? { ...chore, _id: choreId } : prevChore
-					)
-				}))
+				await updateChore(roomId, { ...chore, id: choreId })
 			} else {
-				// If choreId is not provided, add new chore
-				const createdChore = await createChore(roomId, chore)
-				setRoom(prevRoom => ({
-					...prevRoom,
-					chores: [...prevRoom.chores, createdChore]
-				}))
+				await createChore(roomId, chore)
 			}
 		} catch (error) {
 			console.error('Failed to add or update chore', error)
 		}
 	}
 
-	const handleDeleteChore = async (choreId: number) => {
+	const handleDeleteChore = async (choreId: string) => {
 		try {
-			await deleteChore(roomId, choreId)
-			setRoom(prevRoom => ({
-				...prevRoom,
-				chores: prevRoom.chores.filter(chore => chore._id !== choreId)
-			}))
+			deleteChore(room.id, choreId)
 		} catch (error) {
 			console.error('Failed to delete chore', error)
 		}
@@ -106,10 +77,10 @@ const RoomDetail: React.FC = (initialState: any) => {
 							</button>
 						</div>
 						<div className='grid max-h-[32rem] grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
-							{room.chores.map(chore => (
+							{filteredChores.map(chore => (
 								<ChoreComponent
 									chore={chore}
-									key={chore._id}
+									key={chore.id}
 									onEdit={() => {
 										setSelectedChore(chore)
 										setChoreModalOpen(true)

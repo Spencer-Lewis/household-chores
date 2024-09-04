@@ -1,73 +1,121 @@
-import { Chore, FrequencyUnit, Room, Task } from 'types'
-
-// LOCAL BACKEND SERVICE URL
-// const HOST_URL = 'http://localhost:3001'
-
-// DEPLOYED BACKEND SERVICE URL
-const HOST_URL = 'https://chores-service.onrender.com'
+import {
+	addDoc,
+	collection,
+	deleteDoc,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	Timestamp,
+	updateDoc,
+	writeBatch
+} from 'firebase/firestore'
+import { FrequencyUnit } from 'types'
+import { db } from '../firebaseConfig' // Ensure this path points to your firebase.js file
 
 // Fetch all rooms
 export const fetchRooms = async () => {
 	try {
-		// Fetch room data from API
-		const roomResponse = await fetch(`${HOST_URL}/rooms`)
-		const roomsJson = await roomResponse.json()
-		const parsedRooms = roomsJson.map(room => {
-			let parsedRoom: Room = {
-				_id: room._id,
-				name: room.name,
-				chores: room.chores.map(chore => {
-					chore.dueDate = new Date(chore.dueDate)
-					return chore
-				})
+		const roomsCollection = collection(db, 'rooms')
+		const roomSnapshot = await getDocs(roomsCollection)
+		return roomSnapshot.docs.map(doc => {
+			const data = doc.data()
+			return {
+				id: doc.id,
+				...data
+				// Convert timestamps to Date objects
 			}
-			return parsedRoom
 		})
-		return parsedRooms
 	} catch (error) {
-		console.error('Failed to fetch room and chores data', error)
+		console.error('Failed to fetch room data', error)
 	}
 }
 
-// Fetch one room by id
+// Fetch one room by ID
 export const fetchRoom = async roomId => {
-	// Fetch room data from API
-	const roomResponse = await fetch(`${HOST_URL}/rooms/${roomId}`)
-	const roomJson = await roomResponse.json()
-	const room: Room = {
-		_id: roomJson._id,
-		name: roomJson.name,
-		chores: roomJson.chores.map(chore => {
-			chore.dueDate = new Date(chore.dueDate)
-			return chore
-		})
+	try {
+		const roomDoc = doc(db, 'rooms', roomId)
+		const roomSnapshot = await getDoc(roomDoc)
+		if (roomSnapshot.exists()) {
+			const data = roomSnapshot.data()
+			return {
+				id: roomSnapshot.id,
+				...data
+				// Convert timestamps to Date objects
+				// chores: data.chores.map(chore => ({
+				//   ...chore,
+				//   dueDate: chore.dueDate ? chore.dueDate.toDate() : null
+				// }))
+			}
+		} else {
+			throw new Error('Room not found')
+		}
+	} catch (error) {
+		console.error('Failed to fetch room data', error)
 	}
-	return room
 }
 
 // Create room
-export const createRoom = async (roomData: Room) => {
-	const roomResponse = await fetch(`${HOST_URL}/rooms`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(roomData)
-	})
-	const roomJson = await roomResponse.json()
-	roomData._id = roomJson._id
-	return roomData
+export const createRoom = async roomData => {
+	try {
+		const roomsCollection = collection(db, 'rooms')
+		const roomRef = await addDoc(roomsCollection, roomData)
+		return { id: roomRef.id, ...roomData }
+	} catch (error) {
+		console.error('Failed to create room', error)
+	}
 }
 
-// Delete room
-export const deleteRoom = async (roomId: any) => {
-	return await fetch(`${HOST_URL}/rooms/${roomId}`, {
-		method: 'DELETE'
+const deleteChores = async roomId => {
+	const choresCollection = collection(db, 'rooms', roomId, 'chores')
+	const choreQuery = query(choresCollection)
+	const choreSnapshot = await getDocs(choreQuery)
+
+	const batch = writeBatch(db)
+	choreSnapshot.forEach(doc => {
+		batch.delete(doc.ref)
 	})
+
+	await batch.commit()
 }
 
-// Function to mark a chore as completed
-export const updateChoreCompleted = async (chore: Chore, room: Room) => {
+// Delete room and all its associated chores
+export const deleteRoom = async roomId => {
+	try {
+		// Start a batch operation
+		const batch = writeBatch(db)
+
+		// Delete all chores associated with the room
+		await deleteChores(roomId)
+
+		// Delete the room document
+		const roomDoc = doc(db, 'rooms', roomId)
+		batch.delete(roomDoc)
+
+		// Commit the batch
+		await batch.commit()
+
+		console.log('Room and all associated chores deleted successfully')
+	} catch (error) {
+		console.error('Failed to delete room', error)
+	}
+}
+
+// Update chore completion and due date
+export const updateChoreCompleted = async (roomId, chore) => {
+	try {
+		const choreDoc = doc(db, 'rooms', roomId, 'chores', chore.id)
+		const newDueDate = calculateNewDueDate(chore)
+		chore.dueDate = Timestamp.fromDate(newDueDate) // Convert Date to Firestore Timestamp
+		await updateDoc(choreDoc, chore)
+		return chore
+	} catch (error) {
+		console.error('Failed to update chore', error)
+	}
+}
+
+// Helper function to calculate the new due date for a chore
+const calculateNewDueDate = chore => {
 	const currentDate = new Date()
 	const newDueDate = new Date(currentDate)
 	switch (chore.unit) {
@@ -78,114 +126,123 @@ export const updateChoreCompleted = async (chore: Chore, room: Room) => {
 			newDueDate.setDate(currentDate.getDate() + chore.recurrence * 7)
 			break
 		case FrequencyUnit.Months:
-			newDueDate.setDate(currentDate.getDate() + chore.recurrence * 30)
+			newDueDate.setMonth(currentDate.getMonth() + chore.recurrence)
 			break
 		default:
 			break
 	}
-	chore.dueDate = newDueDate
-
-	await fetch(`${HOST_URL}/chores/room/${room._id}/chore/${chore._id}`, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(chore)
-	})
-
-	return chore
+	return newDueDate
 }
 
-export const updateChore = async (roomId: any, chore: Chore, choreId: any) => {
-	return await fetch(`${HOST_URL}/chores/room/${roomId}/chore/${choreId}`, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(chore)
-	})
+// Fetch all chore subdocuments for a room
+export const getChoresForRoom = async roomId => {
+	try {
+		const choresCollection = collection(db, 'rooms', roomId, 'chores')
+		const choresSnapshot = await getDocs(choresCollection)
+		return choresSnapshot.docs.map(doc => {
+			const data = doc.data()
+			return {
+				id: doc.id,
+				...data,
+				// Convert timestamps to Date objects
+				dueDate: data.dueDate ? data.dueDate.toDate() : null
+			}
+		})
+	} catch (error) {
+		console.error('Failed to fetch chores for room', error)
+		throw error // Propagate the error
+	}
 }
 
-export const createChore = async (roomId: any, chore: Chore) => {
-	const createChoreResponse = await fetch(`${HOST_URL}/chores/room/${roomId}`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(chore)
-	})
-	await createChoreResponse.json()
-	return chore
+// Update a chore in a room
+export const updateChore = async (roomId, chore) => {
+	try {
+		const choreDoc = doc(db, 'rooms', roomId, 'chores', chore.id)
+		chore.dueDate = chore.dueDate ? Timestamp.fromDate(chore.dueDate) : null // Convert Date to Firestore Timestamp
+		await updateDoc(choreDoc, chore)
+	} catch (error) {
+		console.error('Failed to update chore', error)
+	}
 }
 
-export const deleteChore = async (roomId: any, choreId: any) => {
-	return await fetch(`${HOST_URL}/chores/room/${roomId}/chore/${choreId}`, {
-		method: 'DELETE'
-	})
+// Create a chore within a room
+export const createChore = async (roomId, chore) => {
+	try {
+		const choresCollection = collection(db, 'rooms', roomId, 'chores')
+		chore.dueDate = chore.dueDate ? Timestamp.fromDate(chore.dueDate) : null // Convert Date to Firestore Timestamp
+		const choreRef = await addDoc(choresCollection, chore)
+		return { id: choreRef.id, ...chore }
+	} catch (error) {
+		console.error('Failed to create chore', error)
+	}
 }
 
+// Delete a chore from a room
+export const deleteChore = async (roomId, choreId) => {
+	try {
+		const choreDoc = doc(db, 'rooms', roomId, 'chores', choreId)
+		await deleteDoc(choreDoc)
+	} catch (error) {
+		console.error('Failed to delete chore', error)
+	}
+}
+
+// Fetch all tasks
 export const fetchTasks = async () => {
 	try {
-		// Fetch Tasks from API
-		const tasksResponse = await fetch(`${HOST_URL}/tasks`)
-		const tasksJson = await tasksResponse.json()
-		const parsedTasks = tasksJson.map(task => {
-			let parsedTask: Task = {
-				_id: task._id,
-				name: task.name,
-				description: task.description,
-				contact: task.contact
-			}
-			return parsedTask
-		})
-		return parsedTasks
+		const tasksCollection = collection(db, 'tasks')
+		const tasksSnapshot = await getDocs(tasksCollection)
+		return tasksSnapshot.docs.map(doc => ({
+			id: doc.id,
+			...doc.data()
+		}))
 	} catch (error) {
 		console.error('Failed to fetch tasks', error)
 	}
 }
 
-// Fetch one task by id
+// Fetch one task by ID
 export const fetchTask = async taskId => {
-	// Fetch task from API
-	const taskResponse = await fetch(`${HOST_URL}/tasks/${taskId}`)
-	const taskJson = await taskResponse.json()
-	const task: Task = {
-		_id: taskJson._id,
-		name: taskJson.name,
-		description: taskJson.description,
-		contact: taskJson.contact
+	try {
+		const taskDoc = doc(db, 'tasks', taskId)
+		const taskSnapshot = await getDoc(taskDoc)
+		if (taskSnapshot.exists()) {
+			return { id: taskSnapshot.id, ...taskSnapshot.data() }
+		} else {
+			throw new Error('Task not found')
+		}
+	} catch (error) {
+		console.error('Failed to fetch task', error)
 	}
-	return task
 }
 
 // Create task
-export const createTask = async (taskData: Task) => {
-	const taskResponse = await fetch(`${HOST_URL}/tasks`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(taskData)
-	})
-	const taskJson = await taskResponse.json()
-	taskData._id = taskJson._id
-	return taskData
+export const createTask = async taskData => {
+	try {
+		const tasksCollection = collection(db, 'tasks')
+		const taskRef = await addDoc(tasksCollection, taskData)
+		return { id: taskRef.id, ...taskData }
+	} catch (error) {
+		console.error('Failed to create task', error)
+	}
 }
 
 // Update task
-export const updateTask = async (taskId: any, taskData: Task) => {
-	return await fetch(`${HOST_URL}/tasks/${taskId}`, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(taskData)
-	})
+export const updateTask = async (taskId, taskData) => {
+	try {
+		const taskDoc = doc(db, 'tasks', taskId)
+		await updateDoc(taskDoc, taskData)
+	} catch (error) {
+		console.error('Failed to update task', error)
+	}
 }
 
 // Delete task
-export const deleteTask = async (taskId: any) => {
-	return await fetch(`${HOST_URL}/tasks/${taskId}`, {
-		method: 'DELETE'
-	})
+export const deleteTask = async taskId => {
+	try {
+		const taskDoc = doc(db, 'tasks', taskId)
+		await deleteDoc(taskDoc)
+	} catch (error) {
+		console.error('Failed to delete task', error)
+	}
 }
