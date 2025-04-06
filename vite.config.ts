@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
 			reportsDirectory: 'coverage'
 		}
 	},
+	publicDir: 'public',
 	plugins: [
 		tsconfigPaths(),
 		react(),

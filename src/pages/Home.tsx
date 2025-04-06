@@ -34,7 +34,7 @@ const HomeDashboard = () => {
 
 	return (
 		<div className='flex h-screen flex-col bg-gray-900 text-white'>
-			<div className='px-4 py-6'>
+			<div className='px-4 pt-6 pb-2'>
 				<h1 className='mb-4 flex justify-center text-4xl font-bold'>
 					<span className='mr-2 text-green-500'>{choresDueToday.length}</span>
 					Chores Due
