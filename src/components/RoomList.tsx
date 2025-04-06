@@ -29,7 +29,7 @@ const RoomList: React.FC<RoomListProps> = ({
 	}
 
 	return (
-		<div className='grid gap-4 md:grid-cols-2'>
+		<div className='grid flex-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
 			{rooms.map(room => (
 				<div key={room.id} className='relative rounded-md bg-gray-700 p-4'>
 					{deleteMode && (

@@ -28,7 +28,7 @@ export const ChoresDueList: React.FC<Props> = ({
 	}
 
 	return (
-		<ul className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+		<ul className='grid flex-1 gap-4 overflow-y-auto md:grid-cols-2 lg:grid-cols-3'>
 			{choresDueToday.length > 0 ? (
 				choresDueToday.map(chore => (
 					<li

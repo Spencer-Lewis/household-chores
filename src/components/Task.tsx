@@ -1,5 +1,4 @@
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { Task } from '../types'
@@ -31,7 +30,7 @@ const TaskComponent: React.FC<TaskComponentProps> = ({
 	return (
 		<div
 			onClick={() => handleSelectForCompletion()}
-			className='relative rounded-md bg-gray-700 p-4 shadow-md transition duration-300 ease-in-out hover:bg-gray-600 hover:shadow-lg'
+			className='relative rounded-md bg-gray-700 p-6 shadow-md transition duration-300 ease-in-out hover:bg-gray-600 hover:shadow-lg'
 		>
 			<span
 				className={`absolute bottom-1 right-1 ${

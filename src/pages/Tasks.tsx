@@ -69,8 +69,8 @@ const TasksPage = (initialState: any) => {
 							</button>
 						</div>
 					</div>
-					<div className='max-h-[33.5rem] overflow-y-auto'>
-						<ul className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+					<div className='flex-1 overflow-y-auto pb-24'>
+						<ul className='grid flex-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
 							{tasks.length > 0 ? (
 								tasks.map(task => (
 									<TaskComponent

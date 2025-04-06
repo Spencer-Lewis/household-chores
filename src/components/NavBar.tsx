@@ -11,7 +11,7 @@ const NavBar = (choresDue: any, tasks: any) => {
 	const currentPath = location.pathname
 	return (
 		<nav
-			className='fixed bottom-0 left-0 flex w-full justify-around bg-gray-700 p-4'
+			className='fixed bottom-0 left-0 flex w-full justify-around bg-gray-700 p-1 py-6'
 			style={{ position: 'fixed', zIndex: '9999' }}
 		>
 			<Link

@@ -33,27 +33,22 @@ const HomeDashboard = () => {
 	}
 
 	return (
-		<div>
-			<div
-				className='fixed top-0 left-0 right-0 z-50 bg-gray-900 py-8'
-				style={{ paddingBottom: '60px' }}
-			>
-				<div className='container mx-auto px-4'>
-					<h1 className='mb-8 flex justify-center text-4xl font-bold'>
-						<span className='mr-2 text-green-500'>{choresDueToday.length}</span>{' '}
-						Chores Due
-					</h1>
-					<div
-						className='max-h-[35.5rem] overflow-y-auto'
-						style={{ marginBottom: '60px' }}
-					>
-						<ChoresDueList
-							choresDueToday={choresDueToday}
-							onCheckmarkClick={handleCheckmarkClick}
-						/>
-					</div>
-				</div>
+		<div className='flex h-screen flex-col bg-gray-900 text-white'>
+			<div className='px-4 py-6'>
+				<h1 className='mb-4 flex justify-center text-4xl font-bold'>
+					<span className='mr-2 text-green-500'>{choresDueToday.length}</span>
+					Chores Due
+				</h1>
 			</div>
+
+			<div className='flex-1 overflow-y-auto px-4 pb-24'>
+				<ChoresDueList
+					choresDueToday={choresDueToday}
+					onCheckmarkClick={handleCheckmarkClick}
+				/>
+			</div>
+
+			{/* NavBar lives outside this component and is fixed */}
 		</div>
 	)
 }
