@@ -32,16 +32,13 @@ const TasksPage = (initialState: any) => {
 				)
 			} else {
 				const createdTask = await createTask(task)
-				const updatedTasks = [...tasks]
-				updatedTasks.push(createdTask)
-				setTasks(updatedTasks)
+				setTasks(prev => [...prev, createdTask])
 			}
 		} catch (error) {
 			console.error('Failed to add or update task', error)
 		}
 	}
 
-	// Function to handle clicking on checkmark button
 	const handleCheckmarkClick = (task: Task) => {
 		if (task.id) {
 			handleDeleteTask(task.id)
@@ -49,56 +46,60 @@ const TasksPage = (initialState: any) => {
 	}
 
 	return (
-		<div className='min-h-screen bg-gray-900 text-white'>
-			<div className='fixed top-0 left-0 right-0 z-50 py-8'>
+		<div className='flex min-h-screen flex-col bg-gray-900 text-white'>
+			{/* HEADER */}
+			<div className='bg-gray-900 pt-6'>
 				<div className='container mx-auto px-4'>
 					<h1 className='mb-2 flex justify-center text-4xl font-bold'>
 						<span className='mr-2 text-green-500'>{tasks.length}</span>
 						Tasks
 					</h1>
-					<div>
-						<div className='mt-4 flex justify-center'>
-							<button
-								className='font-serif mb-4 rounded-md border-none bg-transparent py-2 px-4 text-lg font-semibold text-green-500 hover:bg-green-500 hover:text-white focus:outline-none'
-								onClick={() => {
-									setSelectedTask(null) // Reset selectedChore before adding a new chore
-									setTaskModalOpen(true)
-								}}
-							>
-								<span className='inline-block animate-pulse'>+</span> Add Task
-							</button>
-						</div>
+
+					<div className='mt-4 flex justify-center'>
+						<button
+							className='font-serif mb-4 rounded-md border-none bg-transparent py-2 px-4 text-lg font-semibold text-green-500 hover:bg-green-500 hover:text-white focus:outline-none'
+							onClick={() => {
+								setSelectedTask(null)
+								setTaskModalOpen(true)
+							}}
+						>
+							<span className='inline-block animate-pulse'>+</span> Add Task
+						</button>
 					</div>
-					<div className='flex-1 overflow-y-auto pb-24'>
-						<ul className='grid flex-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
-							{tasks.length > 0 ? (
-								tasks.map(task => (
-									<TaskComponent
-										key={task.id}
-										task={task}
-										onEdit={() => {
-											setSelectedTask(task)
-											setTaskModalOpen(true)
-										}}
-										onCheckmarkClick={handleCheckmarkClick}
-									/>
-								))
-							) : (
-								<li className='flex justify-center text-gray-500'>No tasks</li>
-							)}
-						</ul>
-					</div>
-					<TaskModal
-						isOpen={taskModalOpen}
-						onClose={() => {
-							setTaskModalOpen(false)
-							setSelectedTask(null)
-						}}
-						onSaveTask={handleSaveTask}
-						task={selectedTask}
-					/>
 				</div>
 			</div>
+
+			{/* SCROLLING CONTENT */}
+			<div className='flex-1 overflow-y-auto px-4 pb-24'>
+				<ul className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+					{tasks.length > 0 ? (
+						tasks.map(task => (
+							<TaskComponent
+								key={task.id}
+								task={task}
+								onEdit={() => {
+									setSelectedTask(task)
+									setTaskModalOpen(true)
+								}}
+								onCheckmarkClick={handleCheckmarkClick}
+							/>
+						))
+					) : (
+						<li className='flex justify-center text-gray-500'>No tasks</li>
+					)}
+				</ul>
+			</div>
+
+			{/* MODAL */}
+			<TaskModal
+				isOpen={taskModalOpen}
+				onClose={() => {
+					setTaskModalOpen(false)
+					setSelectedTask(null)
+				}}
+				onSaveTask={handleSaveTask}
+				task={selectedTask}
+			/>
 		</div>
 	)
 }
